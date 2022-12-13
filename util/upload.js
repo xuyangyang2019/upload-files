@@ -48,7 +48,6 @@ function uploadFile(ctx, options) {
   const bb = busboy({ headers: req.headers })
 
   return new Promise((resolve, reject) => {
-    console.log('文件上传中...')
     let result = {
       success: false,
       formData: {},
@@ -102,11 +101,11 @@ function uploadFile(ctx, options) {
       reject(result)
     })
 
-    bb.on('close', () => {
-      console.log('close:Done parsing form!')
-      // res.writeHead(303, { Connection: 'close', Location: '/' })
-      // res.end()
-    })
+    // bb.on('close', () => {
+    //   console.log('close:Done parsing form!')
+    //   // res.writeHead(303, { Connection: 'close', Location: '/' })
+    //   // res.end()
+    // })
 
     req.pipe(bb)
   })
