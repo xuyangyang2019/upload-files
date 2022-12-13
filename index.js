@@ -1,9 +1,12 @@
 const Koa = require('koa')
 const path = require('path')
-const loggerAsync = require('./middleware/logger-async')
-const Router = require('koa-router')
-
 const fs = require('fs')
+
+const loggerAsync = require('./middleware/logger-async')
+
+const Router = require('koa-router')
+const bodyParser = require('koa-bodyparser')
+
 /**
  * 用Promise封装异步读取文件方法
  * @param  {string} page html文件名称
@@ -49,6 +52,7 @@ page
 // 装载所有子路由
 let router = new Router()
 router.use('/', home.routes(), home.allowedMethods())
+router.use('/index', home.routes(), home.allowedMethods())
 router.use('/page', page.routes(), page.allowedMethods())
 
 // const { uploadFile } = require('./util/upload')
@@ -64,6 +68,8 @@ const app = new Koa()
 
 // 加载日志中间件
 app.use(loggerAsync())
+// 使用ctx.body解析中间件
+app.use(bodyParser())
 // 加载路由中间件
 app.use(router.routes()).use(router.allowedMethods())
 
@@ -86,28 +92,33 @@ app.use(router.routes()).use(router.allowedMethods())
  */
 
 app.use(async (ctx) => {
-  ctx.body = 'hello wlorld'
-
-  //   if (ctx.method === 'GET') {
-  //     let title = 'upload pic async'
-  //     await ctx.render('index', {
-  //       title,
-  //     })
-  //   } else if (ctx.url === '/api/picture/upload.json' && ctx.method === 'POST') {
-  //     // 上传文件请求处理
-  //     let result = { success: false }
-  //     let serverFilePath = path.join(__dirname, 'static/image')
-
-  //     // 上传文件事件
-  //     result = await uploadFile(ctx, {
-  //       fileType: 'album',
-  //       path: serverFilePath,
-  //     })
-  //     ctx.body = result
-  //   } else {
-  //     // 其他请求显示404
-  //     ctx.body = '<h1>404！！！ o(╯□╰)o</h1>'
-  //   }
+  console.log(ctx.url)
+  console.log(ctx.method)
+  if (ctx.url === '/' && ctx.method === 'POST') {
+    // 当POST请求的时候，解析POST表单里的数据，并显示出来
+    let postData = ctx.request.body
+    ctx.body = postData
+  }
+  //   ctx.body = 'hello wlorld'
+  //   //   if (ctx.method === 'GET') {
+  //   //     let title = 'upload pic async'
+  //   //     await ctx.render('index', {
+  //   //       title,
+  //   //     })
+  //   //   } else if (ctx.url === '/api/picture/upload.json' && ctx.method === 'POST') {
+  //   //     // 上传文件请求处理
+  //   //     let result = { success: false }
+  //   //     let serverFilePath = path.join(__dirname, 'static/image')
+  //   //     // 上传文件事件
+  //   //     result = await uploadFile(ctx, {
+  //   //       fileType: 'album',
+  //   //       path: serverFilePath,
+  //   //     })
+  //   //     ctx.body = result
+  //   //   } else {
+  //   //     // 其他请求显示404
+  //   //     ctx.body = '<h1>404！！！ o(╯□╰)o</h1>'
+  //   //   }
 })
 
 app.listen(3000, () => {
