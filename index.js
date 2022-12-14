@@ -1,6 +1,6 @@
 const Koa = require('koa')
 const path = require('path')
-const fs = require('fs')
+// const fs = require('fs')
 
 const loggerAsync = require('./middleware/logger-async')
 
@@ -9,6 +9,7 @@ const bodyParser = require('koa-bodyparser')
 const static = require('koa-static')
 const views = require('koa-views')
 
+const { uploadFile } = require('./util/upload')
 // 解析文件或目录
 const content = require('./util/content')
 const mimes = require('./util/mimes')
@@ -67,8 +68,6 @@ router.use('/', home.routes(), home.allowedMethods())
 router.use('/index', home.routes(), home.allowedMethods())
 router.use('/page', page.routes(), page.allowedMethods())
 
-// const { uploadFile } = require('./util/upload')
-
 const app = new Koa()
 
 // 加载日志中间件
@@ -96,8 +95,6 @@ app.use(static(__dirname + '/static'), {
   //     maxage: 30 * 24 * 60 * 60 * 1000, //30天缓存周期
   //     index: 'index.html', // 默认文件
 }) // http://localhost:3000/css/style.css
-
-// app.use(render)
 
 /**
  * 使用第三方中间件 end
@@ -131,28 +128,25 @@ app.use(async (ctx) => {
       // 其他则输出文本
       ctx.body = _content
     }
-  }
+  } else if (ctx.url === '/upload.json' && ctx.method === 'POST') {
+    // 上传文件请求处理
+    let result = { success: false }
+    let serverFilePath = path.join(__dirname, 'upload-files')
+    console.log(serverFilePath)
+    let nd = new Date()
+    // 上传文件事件
+    result = await uploadFile(ctx, {
+      //   fileType: 'album',
+      fileType:
+        nd.getFullYear() + '-' + (nd.getMonth() + 1) + '-' + nd.getDate(),
+      path: serverFilePath,
+    })
 
-  //   ctx.body = 'hello wlorld'
-  //   //   if (ctx.method === 'GET') {
-  //   //     let title = 'upload pic async'
-  //   //     await ctx.render('index', {
-  //   //       title,
-  //   //     })
-  //   //   } else if (ctx.url === '/api/picture/upload.json' && ctx.method === 'POST') {
-  //   //     // 上传文件请求处理
-  //   //     let result = { success: false }
-  //   //     let serverFilePath = path.join(__dirname, 'static/image')
-  //   //     // 上传文件事件
-  //   //     result = await uploadFile(ctx, {
-  //   //       fileType: 'album',
-  //   //       path: serverFilePath,
-  //   //     })
-  //   //     ctx.body = result
-  //   //   } else {
-  //   //     // 其他请求显示404
-  //   //     ctx.body = '<h1>404！！！ o(╯□╰)o</h1>'
-  //   //   }
+    ctx.body = result
+  } else {
+    // 其他请求显示404
+    ctx.body = '<h1>404！！！ o(╯□╰)o</h1>'
+  }
 })
 
 app.listen(3000, () => {
