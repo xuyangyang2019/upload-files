@@ -1,5 +1,5 @@
 function log(ctx) {
-  console.log(ctx.method, ctx.header.host + ctx.url)
+  console.log(Date.now(), ctx.method, ctx.header.host + ctx.url)
 }
 
 module.exports = function () {
