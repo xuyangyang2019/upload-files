@@ -7,6 +7,7 @@ const loggerAsync = require('./middleware/logger-async')
 const Router = require('koa-router')
 const bodyParser = require('koa-bodyparser')
 const static = require('koa-static')
+const views = require('koa-views')
 
 // 解析文件或目录
 const content = require('./util/content')
@@ -18,37 +19,46 @@ function parseMime(url) {
   return mimes[extName]
 }
 
-/**
- * 用Promise封装异步读取文件方法
- * @param  {string} page html文件名称
- * @return {promise}
- */
-function render(page) {
-  return new Promise((resolve, reject) => {
-    let viewUrl = `./views/${page}`
-    fs.readFile(viewUrl, 'binary', (err, data) => {
-      if (err) {
-        reject(err)
-      } else {
-        resolve(data)
-      }
-    })
-  })
-}
+// /**
+//  * 用Promise封装异步读取文件方法
+//  * @param  {string} page html文件名称
+//  * @return {promise}
+//  */
+// function render(page) {
+//   return new Promise((resolve, reject) => {
+//     let viewUrl = `./views/${page}`
+//     fs.readFile(viewUrl, 'binary', (err, data) => {
+//       if (err) {
+//         reject(err)
+//       } else {
+//         resolve(data)
+//       }
+//     })
+//   })
+// }
+const render = views(path.join(__dirname, './views'), {
+  extension: 'ejs',
+  // map: {
+  //   html: 'underscore',
+  // },
+})
 
 let home = new Router()
 // 子路由1
 home.get('/', async (ctx) => {
-  ctx.body = await render('index.html')
+  // ctx.body = await render('index.html')
+  await ctx.render('index', {
+    title: 'hello koa2',
+  })
 })
 // 子路由2
 let page = new Router()
 page
   .get('/404', async (ctx) => {
-    ctx.body = await render('404.html')
+    await ctx.render('404.html', {})
   })
   .get('/todo', async (ctx) => {
-    ctx.body = await render('todo.html')
+    await ctx.render('todo.html', {})
   })
 
 // 装载所有子路由
@@ -58,20 +68,17 @@ router.use('/index', home.routes(), home.allowedMethods())
 router.use('/page', page.routes(), page.allowedMethods())
 
 // const { uploadFile } = require('./util/upload')
-// const views = require('koa-views')
 
 const app = new Koa()
-// const render = views(__dirname + '/views', {
-//   map: {
-//     html: 'ejs',
-//   },
-// })
 
 // 加载日志中间件
 app.use(loggerAsync())
 
 // 使用ctx.body解析中间件
 app.use(bodyParser())
+
+// 加载模板引擎
+app.use(render)
 
 // 由于9.4.0时，通配符取消了，改为了正则的字符，于是*要改为"/(.*)"这样才行，不然会报错。
 // router.all(
@@ -89,13 +96,6 @@ app.use(static(__dirname + '/static'), {
   //     maxage: 30 * 24 * 60 * 60 * 1000, //30天缓存周期
   //     index: 'index.html', // 默认文件
 }) // http://localhost:3000/css/style.css
-
-
-// app.use(
-//   views(path.join(__dirname, './view'), {
-//     extension: 'ejs',
-//   })
-// )
 
 // app.use(render)
 

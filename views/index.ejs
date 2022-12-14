@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>
+        <%= title %>
+    </title>
+</head>
+
+<body>
+    <h1>
+        <%= title %>
+    </h1>
+    <p>EJS Welcome to <%= title %>
+    </p>
+
+    <h1>koa2 demo index page</h1>
+    <p>this is a index page</p>
+    <ul>
+        <li><a href="/">/</a></li>
+        <li><a href="/index">/index</a></li>
+        <li><a href="/page/todo">/page/todo</a></li>
+        <li><a href="/page/404">/page/404</a></li>
+        <li><a href="/nofund">/nofund</a></li>
+        <li><a href="/index.html">/static</a></li>
+        <li><a href="/upload-files">/upload-files</a></li>
+    </ul>
+
+    <h1>koa2 request post demo</h1>
+    <form method="POST" action="/">
+        <p>userName</p>
+        <input name="userName" /><br />
+        <p>nickName</p>
+        <input name="nickName" /><br />
+        <p>email</p>
+        <input name="email" /><br />
+        <button type="submit">submit</button>
+    </form>
+</body>
+
+</html>
