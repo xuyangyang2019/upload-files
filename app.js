@@ -2,14 +2,13 @@ const Koa = require('koa')
 const path = require('path')
 // const fs = require('fs')
 
-const loggerAsync = require('./middlewares/logger-async')
-
-const Router = require('koa-router')
 const bodyParser = require('koa-bodyparser')
 const static = require('koa-static')
 const views = require('koa-views')
 
+const loggerAsync = require('./middlewares/logger-async')
 const { restify } = require('./middlewares/rest') // rest中间件
+const routers = require('./routers/index') // 路由
 
 const { uploadFile } = require('./util/upload')
 // 解析文件或目录
@@ -40,40 +39,9 @@ function parseMime(url) {
 //   })
 // }
 
-const render = views(path.join(__dirname, './views'), {
-  extension: 'ejs',
-  // map: {
-  //   html: 'underscore',
-  // },
-})
-
-let home = new Router()
-// 子路由1
-home.get('/', async (ctx) => {
-  // let content = await renderFun('index.html')
-  // ctx.body =  content
-
-  await ctx.render('index', {
-    title: 'file upload',
-  })
-})
-// 子路由2
-let page = new Router()
-page
-  .get('/404', async (ctx) => {
-    await ctx.render('404.html', {})
-  })
-  .get('/todo', async (ctx) => {
-    await ctx.render('todo.html', {})
-  })
-
-// 装载所有子路由
-let router = new Router()
-router.use('/', home.routes(), home.allowedMethods())
-router.use('/index', home.routes(), home.allowedMethods())
-router.use('/page', page.routes(), page.allowedMethods())
-
 const app = new Koa()
+
+// 使用中间件
 
 // 加载日志中间件
 app.use(loggerAsync())
@@ -82,8 +50,35 @@ app.use(loggerAsync())
 app.use(bodyParser())
 
 // 加载模板引擎
+const render = views(path.join(__dirname, './views'), {
+  extension: 'ejs',
+  // map: {
+  //   html: 'underscore',
+  // },
+})
 app.use(render)
 
+// api接口
+app.use(restify()) // 给ctx添加一个rest()方法
+
+// 加载路由中间件
+// const Router = require('koa-router')
+// // 子路由2
+// let page = new Router()
+// page
+//   .get('/404', async (ctx) => {
+//     await ctx.render('404.html', {})
+//   })
+//   .get('/todo', async (ctx) => {
+//     await ctx.render('todo.html', {})
+//   })
+// // 装载所有子路由
+// let router = new Router()
+// router.use('/page', page.routes(), page.allowedMethods())
+// app.use(router.routes()).use(router.allowedMethods())
+app.use(routers.routes(), routers.allowedMethods())
+
+// static文件夹作为 静态资源
 // 由于9.4.0时，通配符取消了，改为了正则的字符，于是*要改为"/(.*)"这样才行，不然会报错。
 // router.all(
 //   '/(static/*)',
@@ -91,22 +86,10 @@ app.use(render)
 //     maxage: 7 * 24 * 60 * 60 * 1000, //7天
 //   })
 // )
-
-// api接口
-app.use(restify()) // 给ctx添加一个rest()方法
-
-// 加载路由中间件
-app.use(router.routes()).use(router.allowedMethods())
-
-// static文件夹作为 静态资源
 app.use(static(__dirname + '/static'), {
   //     maxage: 30 * 24 * 60 * 60 * 1000, //30天缓存周期
   //     index: 'index.html', // 默认文件
 }) // http://localhost:3000/css/style.css
-
-/**
- * 使用第三方中间件 end
- */
 
 app.use(async (ctx) => {
   // 解析post body
