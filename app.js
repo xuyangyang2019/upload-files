@@ -8,6 +8,7 @@ const views = require('koa-views')
 
 const loggerAsync = require('./middlewares/logger-async')
 const { restify } = require('./middlewares/rest') // rest中间件
+const error = require('./middlewares/error') // 错误处理 和 返回处理
 const routers = require('./routers/index') // 路由
 
 const { uploadFile } = require('./util/upload')
@@ -45,6 +46,8 @@ const app = new Koa()
 
 // 加载日志中间件
 app.use(loggerAsync())
+
+app.use(error) // Error Handler
 
 // 使用ctx.body解析中间件
 app.use(bodyParser())
