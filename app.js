@@ -56,7 +56,8 @@ app.use(bodyParser())
 
 // 加载模板引擎
 const render = views(path.join(__dirname, './views'), {
-  extension: 'ejs',
+  extension: 'html',
+  // extension: 'ejs',
   // map: {
   //   html: 'underscore',
   // },
@@ -97,12 +98,12 @@ app.use(static(__dirname + '/static'), {
 }) // http://localhost:3000/css/style.css
 
 app.use(async (ctx) => {
-  // 解析post body
-  if (ctx.url === '/' && ctx.method === 'POST') {
-    // 当POST请求的时候，解析POST表单里的数据，并显示出来
-    let postData = ctx.request.body
-    ctx.body = postData
-  }
+  // // 解析post body
+  // if (ctx.url === '/' && ctx.method === 'POST') {
+  //   // 当POST请求的时候，解析POST表单里的数据，并显示出来
+  //   let postData = ctx.request.body
+  //   ctx.body = postData
+  // }
 
   // 查询上传的文件
   if (ctx.url.startsWith('/upload-files') && ctx.method === 'GET') {
