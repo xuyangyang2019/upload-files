@@ -138,7 +138,7 @@ app.use(async (ctx) => {
         nd.getFullYear() + '-' + (nd.getMonth() + 1) + '-' + nd.getDate(),
       path: serverFilePath,
     })
-
+    console.log(result)
     ctx.body = result
   } else {
     // 其他请求显示404

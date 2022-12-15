@@ -5,17 +5,45 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>
-        <%= title %>
-    </title>
+    <title>file upload</title>
     <!-- 引入样式 -->
     <!-- <link rel="stylesheet" href="https://unpkg.com/element-ui/lib/theme-chalk/index.css"> -->
     <link rel="stylesheet" href="/css/element-ui.css">
     <!-- 引入组件库 -->
     <!-- <script src="https://cdn.staticfile.org/vue/2.4.2/vue.min.js"></script>
     <script src="https://unpkg.com/element-ui/lib/index.js"></script> -->
-    <script src="js/vue.js"></script>
-    <script src="js/element.js"></script>
+    <script src="/js/vue.js"></script>
+    <script src="/js/element.js"></script>
+    <script src="/js/axios.js"></script>
+
+    <style>
+        .avatar-uploader .el-upload {
+            border: 1px dashed #d9d9d9;
+            border-radius: 6px;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .avatar-uploader .el-upload:hover {
+            border-color: #409EFF;
+        }
+
+        .avatar-uploader-icon {
+            font-size: 28px;
+            color: #8c939d;
+            width: 178px;
+            height: 178px;
+            line-height: 178px;
+            text-align: center;
+        }
+
+        .avatar {
+            width: 178px;
+            height: 178px;
+            display: block;
+        }
+    </style>
 </head>
 
 <body style="margin: 0; overflow: hidden;">
@@ -25,26 +53,25 @@
         </el-row>
 
         <el-tabs :tab-position="'left'">
-            <!-- <el-tab-pane label="表单提交">
-                <h1>koa2 request post demo</h1>
-                <form method="POST" action="/">
-                    <p>userName</p>
-                    <input name="userName" /><br />
-                    <p>nickName</p>
-                    <input name="nickName" /><br />
-                    <p>email</p>
-                    <input name="email" /><br />
-                    <button type="submit">submit</button>
-                </form>
-            </el-tab-pane> -->
             <el-tab-pane label="文件上传">
-                <h1>koa2 upload demo</h1>
-                <form method="POST" action="/upload.json" enctype="multipart/form-data">
+                <el-upload class="upload-demo" drag action="/upload.json" multiple :show-file-list="true"
+                    :on-success="handleAvatarSuccess" :before-upload="beforeAvatarUpload">
+                    <i class="el-icon-upload"></i>
+                    <div class="el-upload__text">将文件拖到此处，或<em>点击上传</em></div>
+                    <div class="el-upload__tip" slot="tip">只能上传jpg/png文件，且不超过500kb</div>
+                </el-upload>
+
+                <!-- <el-upload class="avatar-uploader" action="/upload.json" :show-file-list="false"
+                    :on-success="handleAvatarSuccess" :before-upload="beforeAvatarUpload">
+                    <img v-if="imageUrl" :src="imageUrl" class="avatar">
+                    <i v-else class="el-icon-plus avatar-uploader-icon"></i>
+                </el-upload> -->
+                <!-- <form method="POST" action="/upload.json" enctype="multipart/form-data">
                     <p>file upload</p>
                     <span>picName:</span><input name="picName" type="text" /><br />
                     <input name="file" type="file" /><br /><br />
                     <button type="submit">submit</button>
-                </form>
+                </form> -->
             </el-tab-pane>
             <el-tab-pane label="文件上传异步">
                 <h1>koa2 upload demo</h1>
@@ -60,10 +87,11 @@
                     <i class="el-icon-setting"></i>
                     <span slot="title">文件列表</span>
                 </a>
-                <!-- <el-button type="primary" @click="visible=true">Button</el-button>
+
+                <el-button type="primary" @click="getUploadFiles">查询文件</el-button>
                 <el-dialog :visible.sync="visible" title="Hello world">
                     <p>Try Element</p>
-                </el-dialog> -->
+                </el-dialog>
             </el-tab-pane>
         </el-tabs>
     </div>
@@ -74,6 +102,8 @@
             data: function () {
                 return {
                     activeIndex: '/',
+                    imageUrl: '',
+
                     visible: false,
                     num: 0,
                 }
@@ -82,17 +112,37 @@
                 // this.fun()
             },
             methods: {
-                indexChange(e) {
-                    console.log(e)
+                handleAvatarSuccess(res, file) {
+                    console.log('handleAvatarSuccess', res)
+                    this.imageUrl = URL.createObjectURL(file.raw);
                 },
-                buttonClick() {
-                    console.log('buttonClick')
-                    this.visible = true
-                    // if (this.num >= 100) return
-                    // setTimeout(() => {
-                    //     this.num += 20
-                    //     this.fun()
-                    // }, 1000)
+                beforeAvatarUpload(file) {
+                    const isJPG = file.type === 'image/jpeg';
+                    const isLt2M = file.size / 1024 / 1024 < 2;
+
+                    if (!isJPG) {
+                        this.$message.error('上传头像图片只能是 JPG 格式!');
+                    }
+                    if (!isLt2M) {
+                        this.$message.error('上传头像图片大小不能超过 2MB!');
+                    }
+                    return isJPG && isLt2M;
+                },
+                getUploadFiles() {
+                    console.log('getUploadFiles')
+                    let baseurl_ = 'http://localhost:3001'
+                    var params = {
+                        page: 1,
+                        limit: 10,
+                    };
+                    axios.get(`${baseurl_}/api/upload/files`, { params: params })
+                        .then(res => {
+                            // console.log("saveRoi" + JSON.stringify(res.data))
+                            console.log(res)
+                        })
+                        .catch(error => {
+                            console.log(error)
+                        })
                 }
                 // fun() {
                 //     if (this.num >= 100) return
@@ -100,12 +150,6 @@
                 //         this.num += 20
                 //         this.fun()
                 //     }, 1000)
-                // }
-                // handleOpen(key, keyPath) {
-                //     console.log(key, keyPath);
-                // },
-                // handleClose(key, keyPath) {
-                //     console.log(key, keyPath);
                 // }
             },
         })
