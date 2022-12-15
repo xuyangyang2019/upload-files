@@ -2,48 +2,84 @@
 <html>
 
 <head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>
         <%= title %>
     </title>
+    <!-- 引入样式 -->
+    <link rel="stylesheet" href="https://unpkg.com/element-ui/lib/theme-chalk/index.css">
+    <!-- 引入组件库 -->
+    <script src="https://cdn.staticfile.org/vue/2.4.2/vue.min.js"></script>
+    <script src="https://unpkg.com/element-ui/lib/index.js"></script>
 </head>
 
 <body>
-    <h1>
-        <%= title %>
-    </h1>
-    <p>EJS Welcome to <%= title %>
-    </p>
+    <div id="app">
 
-    <h1>koa2 demo index page</h1>
-    <p>this is a index page</p>
-    <ul>
-        <li><a href="/">/</a></li>
-        <li><a href="/index">/index</a></li>
-        <li><a href="/page/todo">/page/todo</a></li>
-        <li><a href="/page/404">/page/404</a></li>
-        <li><a href="/nofund">/nofund</a></li>
-        <li><a href="/index.html">/static</a></li>
-        <li><a href="/upload-files">/upload-files</a></li>
-    </ul>
+        <el-progress type="circle" :percentage="num"></el-progress>
+        <el-progress type="circle" :percentage="num" status="success"></el-progress>
+        <el-progress type="circle" :percentage="num" status="warning"></el-progress>
 
-    <h1>koa2 request post demo</h1>
-    <form method="POST" action="/">
-        <p>userName</p>
-        <input name="userName" /><br />
-        <p>nickName</p>
-        <input name="nickName" /><br />
-        <p>email</p>
-        <input name="email" /><br />
-        <button type="submit">submit</button>
-    </form>
+        <h1>EJS Welcome to <%= title %>
+        </h1>
 
-    <h1>koa2 upload demo</h1>
-    <form method="POST" action="/upload.json" enctype="multipart/form-data">
-        <p>file upload</p>
-        <span>picName:</span><input name="picName" type="text" /><br />
-        <input name="file" type="file" /><br /><br />
-        <button type="submit">submit</button>
-    </form>
+        <!-- <el-radio v-model="radio" label="1">备选项</el-radio> -->
+
+        <ul>
+            <li><a href="/">/</a></li>
+            <li><a href="/index">/index</a></li>
+            <li><a href="/page/todo">/page/todo</a></li>
+            <li><a href="/page/404">/page/404</a></li>
+            <li><a href="/nofund">/nofund</a></li>
+            <li><a href="/index.html">/static</a></li>
+            <li><a href="/upload-files">/upload-files</a></li>
+        </ul>
+
+        <h1>koa2 request post demo</h1>
+        <form method="POST" action="/">
+            <p>userName</p>
+            <input name="userName" /><br />
+            <p>nickName</p>
+            <input name="nickName" /><br />
+            <p>email</p>
+            <input name="email" /><br />
+            <button type="submit">submit</button>
+        </form>
+
+        <h1>koa2 upload demo</h1>
+        <form method="POST" action="/upload.json" enctype="multipart/form-data">
+            <p>file upload</p>
+            <span>picName:</span><input name="picName" type="text" /><br />
+            <input name="file" type="file" /><br /><br />
+            <button type="submit">submit</button>
+        </form>
+    </div>
+
+    <script>
+        new Vue({
+            el: '#app',
+            data: function () {
+                return {
+                    visible: false,
+                    num: 0,
+                }
+            },
+            created() {
+                this.fun()
+            },
+            methods: {
+                fun() {
+                    if (this.num >= 100) return
+                    setTimeout(() => {
+                        this.num += 20
+                        this.fun()
+                    }, 1000)
+                }
+            }
+        })
+    </script>
 </body>
 
 </html>
