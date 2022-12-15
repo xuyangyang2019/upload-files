@@ -1,0 +1,40 @@
+const md5 = require('md5')
+const { createToken, decodeToken } = require('../../utils/jwt')
+
+const UserService = require('../../mongodb/services/UserService')
+
+module.exports = {
+  // 后端登陆
+  'POST /api/users/login': async (ctx) => {
+    const { username, password } = ctx.request.body
+    // 参数不对抛出异常
+    if (!username || !password) {
+      ctx.throw(400, { code: 40000, message: '缺少必要参数' })
+    }
+
+    const user = await UserService.findOne({ username: username })
+    if (!user || user.password !== md5(password + user.salt)) {
+      ctx.rest({}, 20002, '用户名或密码错误！')
+    } else {
+      if (user.state === 1) {
+        // 其他方式生成token
+        const token = createToken(user)
+        ctx.rest({token: token})
+        // 更新用户表的最近一次的登陆时间
+        UserService.updateById(user._id, { lastLoginTime: Date.now() })
+      } else {
+        ctx.rest('', 20003, '该账号已经禁用！')
+      }
+    }
+  },
+  // 退出登陆
+  'POST /api/users/logout': async (ctx) => {
+    return ctx.rest()
+  },
+  // 通过token解析出用户信息
+  'GET /api/users/info': async (ctx) => {
+    const token = ctx.request.headers.authorization ? ctx.request.headers.authorization.slice(7) : ''
+    const result = decodeToken(token)
+    ctx.rest(result)
+  }
+}
