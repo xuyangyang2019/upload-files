@@ -25,7 +25,7 @@ function parseMime(url) {
 //  * @param  {string} page html文件名称
 //  * @return {promise}
 //  */
-// function render(page) {
+// function renderFun(page) {
 //   return new Promise((resolve, reject) => {
 //     let viewUrl = `./views/${page}`
 //     fs.readFile(viewUrl, 'binary', (err, data) => {
@@ -37,6 +37,7 @@ function parseMime(url) {
 //     })
 //   })
 // }
+
 const render = views(path.join(__dirname, './views'), {
   extension: 'ejs',
   // map: {
@@ -47,7 +48,9 @@ const render = views(path.join(__dirname, './views'), {
 let home = new Router()
 // 子路由1
 home.get('/', async (ctx) => {
-  // ctx.body = await render('index.html')
+  // let content = await renderFun('index.html')
+  // ctx.body =  content
+
   await ctx.render('index', {
     title: 'hello koa2',
   })
@@ -149,8 +152,10 @@ app.use(async (ctx) => {
   }
 })
 
-app.onerror((err) => {
-  console.log('err：', err)
+// 错误处理
+app.on('error', (err, ctx) => {
+  // logError(ctx, err)
+  console.log(err)
 })
 
 app.listen(3001, () => {
