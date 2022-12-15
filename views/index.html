@@ -138,7 +138,7 @@
                     axios.get(`${baseurl_}/api/upload/files`, { params: params })
                         .then(res => {
                             // console.log("saveRoi" + JSON.stringify(res.data))
-                            console.log(res)
+                            console.log(res.data)
                         })
                         .catch(error => {
                             console.log(error)
