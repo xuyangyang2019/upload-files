@@ -5,13 +5,15 @@ const path = require('path')
 const bodyParser = require('koa-bodyparser')
 const static = require('koa-static')
 const views = require('koa-views')
+const routers = require('./routers/index')
 
 const loggerAsync = require('./middlewares/logger-async')
 const { restify } = require('./middlewares/rest') // rest中间件
 const error = require('./middlewares/error') // 错误处理 和 返回处理
-const routers = require('./routers/index') // 路由
 
 const { uploadFile } = require('./util/upload')
+const log4j = require('./util/log4j')
+
 // 解析文件或目录
 const content = require('./util/content')
 const mimes = require('./util/mimes')
@@ -146,7 +148,9 @@ app.use(async (ctx) => {
 // 错误处理
 app.on('error', (err, ctx) => {
   // logError(ctx, err)
-  console.log(err)
+  // console.log(err)
+  // const logText = `${ctx.method} ${ctx.url} ${ctx.status}  `
+  log4j.error(err)
 })
 
 app.listen(3001, () => {
