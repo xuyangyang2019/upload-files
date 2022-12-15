@@ -149,6 +149,10 @@ app.use(async (ctx) => {
   }
 })
 
+app.onerror((err) => {
+  console.log('err：', err)
+})
+
 app.listen(3001, () => {
   // console.log('[demo] upload-pic-async is starting at port 3000')
   console.log('upload-files is starting at: http://localhost:3001')
