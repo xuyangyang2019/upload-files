@@ -2,12 +2,14 @@ const Koa = require('koa')
 const path = require('path')
 // const fs = require('fs')
 
-const loggerAsync = require('./middleware/logger-async')
+const loggerAsync = require('./middlewares/logger-async')
 
 const Router = require('koa-router')
 const bodyParser = require('koa-bodyparser')
 const static = require('koa-static')
 const views = require('koa-views')
+
+const { restify } = require('./middlewares/rest') // rest中间件
 
 const { uploadFile } = require('./util/upload')
 // 解析文件或目录
@@ -89,6 +91,9 @@ app.use(render)
 //     maxage: 7 * 24 * 60 * 60 * 1000, //7天
 //   })
 // )
+
+// api接口
+app.use(restify()) // 给ctx添加一个rest()方法
 
 // 加载路由中间件
 app.use(router.routes()).use(router.allowedMethods())

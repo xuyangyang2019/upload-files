@@ -25,8 +25,8 @@
             </h1>
         </el-row>
 
-        <el-tabs :tab-position="'left'" >
-            <el-tab-pane label="表单提交">
+        <el-tabs :tab-position="'left'">
+            <!-- <el-tab-pane label="表单提交">
                 <h1>koa2 request post demo</h1>
                 <form method="POST" action="/">
                     <p>userName</p>
@@ -37,7 +37,7 @@
                     <input name="email" /><br />
                     <button type="submit">submit</button>
                 </form>
-            </el-tab-pane>
+            </el-tab-pane> -->
             <el-tab-pane label="文件上传">
                 <h1>koa2 upload demo</h1>
                 <form method="POST" action="/upload.json" enctype="multipart/form-data">
@@ -57,52 +57,16 @@
                 </form>
             </el-tab-pane>
             <el-tab-pane label="文件列表">
-                <el-button type="primary" @click="visible=true">Button</el-button>
+                <a href="/upload-files">
+                    <i class="el-icon-setting"></i>
+                    <span slot="title">文件列表</span>
+                </a>
+                <!-- <el-button type="primary" @click="visible=true">Button</el-button>
                 <el-dialog :visible.sync="visible" title="Hello world">
                     <p>Try Element</p>
-                </el-dialog>
+                </el-dialog> -->
             </el-tab-pane>
         </el-tabs>
-
-        <!-- <el-col style="height: 100%;border: solid red 1px;" :span="4">
-                <el-menu :default-active="activeIndex" class="el-menu-vertical-demo" @change="indexChange">
-                    <el-menu-item index="/">
-                        <i class="el-icon-location"></i>
-                        <a href="/">
-                            <span>首页</span>
-                        </a>
-                    </el-menu-item>
-
-                    <el-menu-item index="/page/todo">
-                        <a href="/page/todo">
-                            <i class="el-icon-menu"></i>
-                            <span>todo</span>
-                        </a>
-                    </el-menu-item>
-
-                    <el-menu-item index="2">
-                        <a href="/page/404">
-                            <i class="el-icon-menu"></i>
-                            <span slot="title">404</span>
-                        </a>
-                    </el-menu-item>
-
-                    <el-menu-item index="3">
-                        <a href="/page/404">
-                            <i class="el-icon-document"></i>
-                            <span slot="title">文件上传2</span>
-                        </a>
-                    </el-menu-item>
-
-                    <el-menu-item index="4">
-                        <a href="/upload-files">
-                            <i class="el-icon-setting"></i>
-                            <span slot="title">文件列表</span>
-                        </a>
-                    </el-menu-item>
-                </el-menu>
-            </el-col> -->
-
     </div>
 
     <script>
