@@ -52,7 +52,7 @@ home.get('/', async (ctx) => {
   // ctx.body =  content
 
   await ctx.render('index', {
-    title: 'hello koa2',
+    title: 'file upload',
   })
 })
 // 子路由2

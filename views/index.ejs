@@ -9,21 +9,67 @@
         <%= title %>
     </title>
     <!-- 引入样式 -->
-    <link rel="stylesheet" href="https://unpkg.com/element-ui/lib/theme-chalk/index.css">
+    <!-- <link rel="stylesheet" href="https://unpkg.com/element-ui/lib/theme-chalk/index.css"> -->
+    <link rel="stylesheet" href="/css/element-ui.css">
     <!-- 引入组件库 -->
-    <script src="https://cdn.staticfile.org/vue/2.4.2/vue.min.js"></script>
-    <script src="https://unpkg.com/element-ui/lib/index.js"></script>
+    <!-- <script src="https://cdn.staticfile.org/vue/2.4.2/vue.min.js"></script>
+    <script src="https://unpkg.com/element-ui/lib/index.js"></script> -->
+    <script src="js/vue.js"></script>
+    <script src="js/element.js"></script>
 </head>
 
 <body>
     <div id="app">
+
+        <el-menu default-active="/page/todo" :router="true" class="el-menu-vertical-demo">
+            <el-menu-item index="/" route="/">
+                <i class="el-icon-location"></i>
+                <span>首页</span>
+            </el-menu-item>
+
+            <el-menu-item index="/page/todo">
+                <i class="el-icon-menu"></i>
+                <span slot="title">page/todo</span>
+            </el-menu-item>
+
+            <el-menu-item index="2">
+                <i class="el-icon-menu"></i>
+                <span slot="title">文件上传</span>
+            </el-menu-item>
+
+            <el-menu-item index="3">
+                <i class="el-icon-document"></i>
+                <span slot="title">文件上传2</span>
+            </el-menu-item>
+
+            <el-menu-item index="4">
+                <i class="el-icon-setting"></i>
+                <span slot="title">文件列表</span>
+            </el-menu-item>
+        </el-menu>
+
         <h1>EJS Welcome to <%= title %>
         </h1>
 
+        <el-button type="primary" @click="visible=true">Button</el-button>
+        <el-dialog :visible.sync="visible" title="Hello world">
+            <p>Try Element</p>
+        </el-dialog>
 
-        <el-progress type="circle" :percentage="num"></el-progress>
+
+        <!-- <button class="btn" id="J_UploadPictureBtn">上传图片</button>
+        <hr />
+        <p>上传进度<span id="J_UploadProgress">0</span>%</p>
+        <p>上传结果图片</p>
+        <div id="J_PicturePreview" class="preview-picture">
+        </div>
+        <script src="/js/index.js"></script> -->
+
+
+
+        <!-- <el-progress type="circle" :percentage="num"></el-progress>
         <el-progress type="circle" :percentage="num" status="success"></el-progress>
-        <el-progress type="circle" :percentage="num" status="warning"></el-progress>
+        <el-progress type="circle" :percentage="num" status="warning"></el-progress> -->
 
 
         <!-- <el-radio v-model="radio" label="1">备选项</el-radio> -->
@@ -68,17 +114,32 @@
                 }
             },
             created() {
-                this.fun()
+                // this.fun()
             },
             methods: {
-                fun() {
-                    if (this.num >= 100) return
-                    setTimeout(() => {
-                        this.num += 20
-                        this.fun()
-                    }, 1000)
+                buttonClick() {
+                    console.log('buttonClick')
+                    this.visible = true
+                    // if (this.num >= 100) return
+                    // setTimeout(() => {
+                    //     this.num += 20
+                    //     this.fun()
+                    // }, 1000)
                 }
-            }
+                // fun() {
+                //     if (this.num >= 100) return
+                //     setTimeout(() => {
+                //         this.num += 20
+                //         this.fun()
+                //     }, 1000)
+                // }
+                // handleOpen(key, keyPath) {
+                //     console.log(key, keyPath);
+                // },
+                // handleClose(key, keyPath) {
+                //     console.log(key, keyPath);
+                // }
+            },
         })
     </script>
 </body>
