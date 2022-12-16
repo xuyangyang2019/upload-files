@@ -4,7 +4,6 @@ const path = require('path')
 // 解析文件或目录
 const content = require('../../util/content')
 const mimes = require('../../util/mimes')
-const { uploadFile } = require('../../util/upload')
 
 // 解析资源类型
 function parseMime(url) {
@@ -47,27 +46,5 @@ module.exports = {
     // // const result = await TagService.findManyByPage(queryCondition, {}, pageNum, pageSize)
     // // const total = await TagService.count(queryCondition)
     // ctx.rest({ list: {}, total: 10 })
-  },
-  // 文件上传接口
-  'POST /file/upload': async (ctx) => {
-    // 上传文件请求处理
-    let result = { success: false }
-    // 上传文件事件
-    result = await uploadFile(ctx)
-    // ctx.body = result
-
-    // "bizCode": 0,
-    // "msg": "success",
-    // "data": {
-    //     "fileSize": 102,
-    //     "url": "http://103.215.36.202:14086/juliao/20221216/B262AD2E22A0ABA26C75415588740A6A.txt"
-    // }
-
-    ctx.response.type = 'application/json'
-    ctx.response.body = {
-      code: 20000,
-      msg: 'success',
-      data: result,
-    }
   },
 }
