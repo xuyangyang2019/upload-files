@@ -54,19 +54,19 @@
 
         <el-tabs :tab-position="'left'">
             <el-tab-pane label="文件上传">
-                <el-upload class="upload-demo" drag action="/upload.json" multiple :show-file-list="true"
+                <el-upload class="upload-demo" drag action="/file/upload" multiple :show-file-list="true"
                     :on-success="handleAvatarSuccess" :before-upload="beforeAvatarUpload">
                     <i class="el-icon-upload"></i>
                     <div class="el-upload__text">将文件拖到此处，或<em>点击上传</em></div>
                     <div class="el-upload__tip" slot="tip">只能上传jpg/png文件，且不超过500kb</div>
                 </el-upload>
+                <div>
+                    <p>返回结果</p>
+                    {{result}}
+                </div>
 
-                <!-- <el-upload class="avatar-uploader" action="/upload.json" :show-file-list="false"
-                    :on-success="handleAvatarSuccess" :before-upload="beforeAvatarUpload">
-                    <img v-if="imageUrl" :src="imageUrl" class="avatar">
-                    <i v-else class="el-icon-plus avatar-uploader-icon"></i>
-                </el-upload> -->
-                <!-- <form method="POST" action="/upload.json" enctype="multipart/form-data">
+
+                <!-- <form method="POST" action="/file/upload" enctype="multipart/form-data">
                     <p>file upload</p>
                     <span>picName:</span><input name="picName" type="text" /><br />
                     <input name="file" type="file" /><br /><br />
@@ -103,6 +103,7 @@
                 return {
                     activeIndex: '/',
                     imageUrl: '',
+                    result: {},
 
                     visible: false,
                     num: 0,
@@ -114,6 +115,8 @@
             methods: {
                 handleAvatarSuccess(res, file) {
                     console.log('handleAvatarSuccess', res)
+                    console.log('handleAvatarSuccess', file.raw)
+                    this.result = res
                     this.imageUrl = URL.createObjectURL(file.raw);
                 },
                 beforeAvatarUpload(file) {
@@ -129,13 +132,12 @@
                     return isJPG && isLt2M;
                 },
                 getUploadFiles() {
-                    console.log('getUploadFiles')
                     let baseurl_ = 'http://localhost:3001'
                     var params = {
                         page: 1,
                         limit: 10,
                     };
-                    axios.get(`${baseurl_}/api/upload/files`, { params: params })
+                    axios.get(`${baseurl_}/api/file`, { params: params })
                         .then(res => {
                             // console.log("saveRoi" + JSON.stringify(res.data))
                             console.log(res.data)

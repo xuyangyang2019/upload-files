@@ -1,7 +1,7 @@
-const inspect = require('util').inspect
 const fs = require('fs')
 const path = require('path')
 const busboy = require('busboy')
+const inspect = require('util').inspect
 
 /**
  * 同步创建文件目录
@@ -31,50 +31,71 @@ function getSuffixName(fileName) {
 
 /**
  * 上传文件
- * @param  {object} ctx     koa上下文
+ * @param  {object} ctx koa上下文
  * @param  {object} options 文件上传参数 fileType文件类型， path文件存放路径
  * @return {promise}
  */
-function uploadFile(ctx, options) {
+function uploadFile(ctx, options = {}) {
+  let nowDay = new Date()
+  let defalutDir =
+    nowDay.getFullYear() +
+    '-' +
+    (nowDay.getMonth() + 1) +
+    '-' +
+    nowDay.getDate()
+  let defalutPath = path.join(__dirname, '../upload-files')
+
   // 以参数目录 加 文件类型作为 保存的目录
-  let fileType = options.fileType || 'common'
-  let filePath = path.join(options.path, fileType)
+  let fileType = options.fileType || defalutDir
+  let filePath = path.join(options.path || defalutPath, fileType)
   // 目录是否存在
   let mkdirResult = mkdirsSync(filePath)
 
   let req = ctx.req
   let res = ctx.res
-
   const bb = busboy({ headers: req.headers })
 
   return new Promise((resolve, reject) => {
     let result = {
-      success: false,
-      formData: {},
+      success: false, // 上传结果
+      message: '', // 上传结果
+      formData: {}, // 表单信息
+      filename: '', // 文件名
+      encoding: '', // 编码方式
+      mimeType: '', // 文件类型
+      fileSize: 0, // 文件大小
     }
 
     // 解析请求文件事件
     bb.on('file', (name, file, info) => {
-      console.log('on file name:', name)
-      // console.log('on file file:', file)
-      console.log('on file info:', info)
+      // console.log('file name:', name)
+      // console.log('file file:', file)
+      console.log('file info:', info)
       const { filename, encoding, mimeType } = info
-     
+
+      // result.name = name
+      result = { ...result, ...info }
+
       // 生成随机文件名
       let fileName =
         Math.random().toString(16).substr(2) + '.' + getSuffixName(filename)
+
       // 保存的路径
       let _uploadFilePath = path.join(filePath, fileName)
       let saveTo = path.join(_uploadFilePath)
+
+      result.saveTo = saveTo
+
       // 文件保存到制定路径
       file.pipe(fs.createWriteStream(saveTo))
 
       file
         .on('data', (data) => {
-          console.log(`File [${name}] got ${data.length} bytes`)
+          // console.log(`File [${name}] size: ${data.length} bytes`)
+          result.fileSize = result.fileSize + data.length
         })
         .on('close', () => {
-          console.log(`File [${name}] done`)
+          // console.log(`File [${name}] done`)
           result.success = true
           result.message = '文件上传成功'
         })
@@ -85,27 +106,21 @@ function uploadFile(ctx, options) {
       // console.log('field name:', name)
       // console.log('field val:', val)
       // console.log('field info:', info)
-      // console.log('表单字段数据 [' + name + ']: value: ' + inspect(val))
       result.formData[name] = inspect(val)
     })
 
     // 解析结束事件
     bb.on('finish', function () {
-      console.log('finish:文件上结束')
+      console.log('finish:文件上结束', result)
       resolve(result)
     })
 
     // 解析错误事件
     bb.on('error', function (err) {
-      console.log('error:文件上出错')
+      // console.log('error:文件上出错')
+      result.message = inspect(err)
       reject(result)
     })
-
-    // bb.on('close', () => {
-    //   console.log('close:Done parsing form!')
-    //   // res.writeHead(303, { Connection: 'close', Location: '/' })
-    //   // res.end()
-    // })
 
     req.pipe(bb)
   })

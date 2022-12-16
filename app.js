@@ -12,7 +12,6 @@ const loggerAsync = require('./middlewares/logger-async')
 const { restify } = require('./middlewares/rest') // rest中间件
 const error = require('./middlewares/error') // 错误处理 和 返回处理
 
-const { uploadFile } = require('./util/upload')
 const log4j = require('./util/log4j')
 
 // 解析文件或目录
@@ -129,7 +128,7 @@ app.use(async (ctx) => {
   //   ctx.body = postData
   // }
 
-  // 查询上传的文件
+  // // 查询上传的文件
   if (ctx.url.startsWith('/upload-files') && ctx.method === 'GET') {
     // 获取静态资源内容，有可能是文件内容，目录，或404
     let _content = await content(ctx, __dirname)
@@ -149,21 +148,6 @@ app.use(async (ctx) => {
       // 其他则输出文本
       ctx.body = _content
     }
-  } else if (ctx.url === '/upload.json' && ctx.method === 'POST') {
-    // 上传文件请求处理
-    let result = { success: false }
-    let serverFilePath = path.join(__dirname, 'upload-files')
-    console.log(serverFilePath)
-    let nd = new Date()
-    // 上传文件事件
-    result = await uploadFile(ctx, {
-      //   fileType: 'album',
-      fileType:
-        nd.getFullYear() + '-' + (nd.getMonth() + 1) + '-' + nd.getDate(),
-      path: serverFilePath,
-    })
-    console.log(result)
-    ctx.body = result
   } else {
     // 其他请求显示404
     ctx.body = '<h1>404！！！ o(╯□╰)o</h1>'
