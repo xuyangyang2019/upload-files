@@ -1,4 +1,4 @@
-const log4j = require('../util/log4j')
+const log4j = require('../utils/log4j')
 
 /**
  * 获取客户端ip地址

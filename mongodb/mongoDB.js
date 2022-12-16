@@ -1,5 +1,5 @@
 const mongoose = require('mongoose')
-const log4j = require('../util/log4j')
+const log4j = require('../utils/log4j')
 
 // const url = `mongodb://${config.user}:${config.pwd}@${config.host}:${config.port}/${config.db}`
 const url = `mongodb://127.0.0.1:27017/fileUpload`

@@ -2,8 +2,8 @@
 const path = require('path')
 
 // 解析文件或目录
-const content = require('../../util/content')
-const mimes = require('../../util/mimes')
+const content = require('../../utils/content')
+const mimes = require('../../utils/mimes')
 
 // 解析资源类型
 function parseMime(url) {

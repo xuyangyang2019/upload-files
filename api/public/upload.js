@@ -1,5 +1,5 @@
 // 解析文件或目录
-const { uploadFile } = require('../../util/upload')
+const { uploadFile } = require('../../utils/upload')
 const FileService = require('../../mongodb/services/FileService')
 
 module.exports = {

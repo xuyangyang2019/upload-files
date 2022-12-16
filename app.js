@@ -12,11 +12,11 @@ const loggerAsync = require('./middlewares/logger-async')
 const { restify } = require('./middlewares/rest') // rest中间件
 const error = require('./middlewares/error') // 错误处理 和 返回处理
 
-const log4j = require('./util/log4j')
+const log4j = require('./utils/log4j')
 
 // 解析文件或目录
-const content = require('./util/content')
-const mimes = require('./util/mimes')
+const content = require('./utils/content')
+const mimes = require('./utils/mimes')
 // 解析资源类型
 function parseMime(url) {
   let extName = path.extname(url)
