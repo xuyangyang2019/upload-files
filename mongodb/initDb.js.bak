@@ -1,0 +1,64 @@
+const md5 = require('md5')
+const { randomStr } = require('../utils/random')
+
+const salt = randomStr(5)
+const salt2 = randomStr(5)
+// const UserService = require('../services').UserService
+const UserModel = require('./models').user
+
+const users = [
+  {
+    username: 'admin', // 用户名
+    password: md5('123456' + salt), // 密码
+    nickname: 'ADMIN', // 昵称
+    roles: ['admin'], // 角色 admin editor visitor
+    phoneNum: '', // 电话号码
+    state: 1, // 状态 1正常 0禁用
+    salt: salt, // 盐
+    lastLoginTime: Date.now() // 上次登录时间
+  },
+  {
+    username: 'xyy', // 用户名
+    password: md5('111111' + salt2), // 密码
+    nickname: 'XYY', // 昵称
+    roles: ['editor'], // 角色 admin editor visitor
+    phoneNum: 15211111111, // 电话号码
+    state: 1, // 状态 1正常 0禁用
+    salt: salt2, // 盐
+    lastLoginTime: Date.now() // 上次登录时间
+  }
+]
+
+async function initUser() {
+  // 批量插入数据
+  UserModel.insertMany(users)
+    .then(function (docs) {
+      console.log(docs)
+    })
+    .catch(function (err) {
+      console.log(err)
+    })
+
+  // const users = await UserService.findMany({})
+  // if (users.length === 0) {
+  //   const user = await UserService.save({
+  //     username: 'admin', // 用户名
+  //     password: md5('123456' + salt), // 密码
+  //     nickname: '管理员', // 昵称
+  //     roles: ['admin'], // 角色 admin editor visitor
+  //     phoneNum: '', // 电话号码
+  //     state: 1, // 状态 1正常 0禁用
+  //     salt: salt, // 盐
+  //     lastLoginTime: '' // 上次登录时间
+  //   })
+  //   if (user._id) {
+  //     console.log('插入数据成功，按 ctrl + c 退出！')
+  //   } else {
+  //     console.log('添加admin失败！')
+  //   }
+  // } else {
+  //   console.log('Userinit has done', users)
+  // }
+}
+
+initUser()

@@ -1,5 +1,6 @@
 // 解析文件或目录
 const { uploadFile } = require('../../util/upload')
+const FileService = require('../../mongodb/services/FileService')
 
 module.exports = {
   // 文件上传接口
@@ -8,7 +9,9 @@ module.exports = {
     let result = { success: false }
     // 上传文件事件
     result = await uploadFile(ctx)
-    // ctx.body = result
+
+    // 保存结果到数据库
+    FileService.save(result)
 
     // "bizCode": 0,
     // "msg": "success",

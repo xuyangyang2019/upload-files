@@ -59,13 +59,12 @@ function uploadFile(ctx, options = {}) {
     let result = {
       success: false, // 上传结果
       message: '', // 上传结果
-      url:'',
+      url:'', // url
+      saveTo:'', // 本地地址
       formData: {}, // 表单信息
-
       filename: '', // 文件名
       encoding: '', // 编码方式
       mimeType: '', // 文件类型
-
       fileSize: 0, // 文件大小
     }
 
