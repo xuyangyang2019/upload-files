@@ -143,6 +143,7 @@
                             console.log(error)
                         })
                 },
+                // 上传文件
                 requestEvent(options) {
                     try {
                         let formData = options.formData
@@ -165,6 +166,7 @@
                         options.fail(err)
                     }
                 },
+                // 选择文件
                 uploadEvent(options) {
                     let file
                     let formData = new FormData()
@@ -185,6 +187,7 @@
                         })
                     }
                 },
+                // 上传的回调函数判断
                 uploadAction(options) {
                     if (!UtilType.isJSON(options)) {
                         console.log('upload options is null')
@@ -203,17 +206,16 @@
 
                     this.uploadEvent(_options)
                 },
+                // 点击事件
                 uploadImg() {
                     // let btn = document.getElementById('J_UploadPictureBtn')
                     let progressElem = document.getElementById('J_UploadProgress')
                     let previewElem = document.getElementById('J_PicturePreview')
                     this.uploadAction({
                         success: function (result) {
-                            console.log(result)
                             if (result && result.code === 20000 && result.data) {
                                 previewElem.innerHTML =
-                                    '<img src="' + result.data.url + '" style="max-width: 100%">' +
-                                    '<img src="' + result.data.url + '" style="max-width: 100%">' 
+                                    '<img src="' + result.data.url + '" style="max-width: 100%">'
                             }
                         },
                         progress: function (data) {
