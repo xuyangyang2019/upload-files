@@ -129,7 +129,7 @@ app.use(async (ctx) => {
   // }
 
   // // 查询上传的文件
-  if (ctx.url.startsWith('/upload-files') && ctx.method === 'GET') {
+  if (ctx.url.startsWith('/files') && ctx.method === 'GET') {
     // 获取静态资源内容，有可能是文件内容，目录，或404
     let _content = await content(ctx, __dirname)
     // 解析请求内容的类型

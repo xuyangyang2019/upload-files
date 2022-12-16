@@ -43,7 +43,7 @@ function uploadFile(ctx, options = {}) {
     (nowDay.getMonth() + 1) +
     '-' +
     nowDay.getDate()
-  let defalutPath = path.join(__dirname, '../upload-files')
+  let defalutPath = path.join(__dirname, '../files')
 
   // 以参数目录 加 文件类型作为 保存的目录
   let fileType = options.fileType || defalutDir
@@ -59,10 +59,13 @@ function uploadFile(ctx, options = {}) {
     let result = {
       success: false, // 上传结果
       message: '', // 上传结果
+      url:'',
       formData: {}, // 表单信息
+
       filename: '', // 文件名
       encoding: '', // 编码方式
       mimeType: '', // 文件类型
+
       fileSize: 0, // 文件大小
     }
 
@@ -85,8 +88,9 @@ function uploadFile(ctx, options = {}) {
       let saveTo = path.join(_uploadFilePath)
 
       result.saveTo = saveTo
+      result.url = `//${ctx.host}/files/${fileType}/${fileName}`
 
-      // 文件保存到制定路径
+      // 文件保存到指定路径
       file.pipe(fs.createWriteStream(saveTo))
 
       file
@@ -127,5 +131,5 @@ function uploadFile(ctx, options = {}) {
 }
 
 module.exports = {
-  uploadFile,
+  uploadFile
 }
