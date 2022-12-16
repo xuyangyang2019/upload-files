@@ -128,7 +128,7 @@ app.use(async (ctx) => {
   //   ctx.body = postData
   // }
 
-  // // 查询上传的文件
+  // 查询上传的文件
   if (ctx.url.startsWith('/files') && ctx.method === 'GET') {
     // 获取静态资源内容，有可能是文件内容，目录，或404
     let _content = await content(ctx, __dirname)
