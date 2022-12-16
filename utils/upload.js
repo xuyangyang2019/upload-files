@@ -59,8 +59,8 @@ function uploadFile(ctx, options = {}) {
     let result = {
       success: false, // 上传结果
       message: '', // 上传结果
-      url:'', // url
-      saveTo:'', // 本地地址
+      url: '', // url
+      saveTo: '', // 本地地址
       formData: {}, // 表单信息
       filename: '', // 文件名
       encoding: '', // 编码方式
@@ -72,7 +72,7 @@ function uploadFile(ctx, options = {}) {
     bb.on('file', (name, file, info) => {
       // console.log('file name:', name)
       // console.log('file file:', file)
-      console.log('file info:', info)
+      // console.log('file info:', info)
       const { filename, encoding, mimeType } = info
 
       // result.name = name
@@ -114,7 +114,7 @@ function uploadFile(ctx, options = {}) {
 
     // 解析结束事件
     bb.on('finish', function () {
-      console.log('finish:文件上结束', result)
+      // console.log('finish:文件上结束', result)
       resolve(result)
     })
 
@@ -130,5 +130,5 @@ function uploadFile(ctx, options = {}) {
 }
 
 module.exports = {
-  uploadFile
+  uploadFile,
 }
