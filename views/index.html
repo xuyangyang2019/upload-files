@@ -54,11 +54,12 @@
 
         <el-tabs :tab-position="'left'">
             <el-tab-pane label="文件上传">
-                <el-upload class="upload-demo" drag action="/upload" multiple :show-file-list="true"
+                <el-upload class="upload-demo" drag action="/api/upload" multiple :show-file-list="true"
                     :on-success="handleAvatarSuccess" :before-upload="beforeAvatarUpload">
                     <i class="el-icon-upload"></i>
                     <div class="el-upload__text">将文件拖到此处，或<em>点击上传</em></div>
-                    <div class="el-upload__tip" slot="tip">只能上传jpg/png文件，且不超过500kb</div>
+                    <!-- <div class="el-upload__tip" slot="tip">只能上传jpg/png文件，且不超过500kb</div> -->
+                    <div class="el-upload__tip" slot="tip">文件大小不能超过10M</div>
                 </el-upload>
                 <div>
                     <p>返回结果</p>
@@ -73,15 +74,17 @@
                     <button type="submit">submit</button>
                 </form> -->
             </el-tab-pane>
+
             <el-tab-pane label="文件上传异步">
-                <h1>koa2 upload demo</h1>
-                <form method="POST" action="/upload.json" enctype="multipart/form-data">
-                    <p>file upload</p>
-                    <span>picName:</span><input name="picName" type="text" /><br />
-                    <input name="file" type="file" /><br /><br />
-                    <button type="submit">submit</button>
-                </form>
+                <button class="btn" id="J_UploadPictureBtn">上传图片</button>
+                <hr />
+                <p>上传进度<span id="J_UploadProgress">0</span>%</p>
+                <p>上传结果图片</p>
+                <div id="J_PicturePreview" class="preview-picture">
+                </div>
+                <script src="/js/index.js"></script>
             </el-tab-pane>
+
             <el-tab-pane label="文件列表">
                 <a href="/upload-files">
                     <i class="el-icon-setting"></i>
@@ -114,22 +117,21 @@
             },
             methods: {
                 handleAvatarSuccess(res, file) {
-                    console.log('handleAvatarSuccess', res)
-                    console.log('handleAvatarSuccess', file.raw)
                     this.result = res
                     this.imageUrl = URL.createObjectURL(file.raw);
                 },
                 beforeAvatarUpload(file) {
-                    const isJPG = file.type === 'image/jpeg';
-                    const isLt2M = file.size / 1024 / 1024 < 2;
+                    // const isJPG = file.type === 'image/jpeg';
+                    const isLt2M = file.size / 1024 / 1024 < 10;
 
-                    if (!isJPG) {
-                        this.$message.error('上传头像图片只能是 JPG 格式!');
-                    }
+                    // if (!isJPG) {
+                    //     this.$message.error('上传头像图片只能是 JPG 格式!');
+                    // }
                     if (!isLt2M) {
-                        this.$message.error('上传头像图片大小不能超过 2MB!');
+                        this.$message.error('文件大小不能超过 10MB!');
                     }
-                    return isJPG && isLt2M;
+                    // return isJPG && isLt2M;
+                    return isLt2M;
                 },
                 getUploadFiles() {
                     let baseurl_ = 'http://localhost:3001'
