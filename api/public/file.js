@@ -15,11 +15,13 @@ module.exports = {
     // 文件类型
     if (fileType && fileType !== 'all') {
       queryCondition.mimeType = new RegExp(fileType) // 模糊查询
-      // queryCondition.mimeType = fileType // 模糊查询
     }
     // 时间段
     if (startTime && endTime) {
-      queryCondition.createdAt = { $gte: startTime, $lte: endTime }
+      queryCondition.createdAt = {
+        $gte: startTime,
+        $lt: Number(endTime) + 24 * 3600 * 1000,
+      }
     }
     const result = await FileService.findManyByPage(
       queryCondition,

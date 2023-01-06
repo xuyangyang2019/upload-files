@@ -57,20 +57,30 @@
                     :on-success="handleAvatarSuccess" :before-upload="beforeAvatarUpload">
                     <i class="el-icon-upload"></i>
                     <div class="el-upload__text">将文件拖到此处，或<em>点击上传</em></div>
-                    <!-- <div class="el-upload__tip" slot="tip">只能上传jpg/png文件，且不超过500kb</div> -->
                     <div class="el-upload__tip" slot="tip">文件大小不能超过10M</div>
                 </el-upload>
+
+                <!-- <el-upload class="upload-demo" ref="uploadBox" action="/api/upload" :on-preview="handlePreview"
+                    :on-remove="handleRemove" :file-list="fileList" :auto-upload="false" :on-error = "handleError">
+
+                    <el-button slot="trigger" size="small" type="primary">选取文件</el-button>
+
+                    <el-button style="margin-left: 10px;" size="small" type="success" @click="submitUpload">上传到服务器
+                    </el-button>
+                </el-upload> -->
+
+                <form method="POST" action="/file/upload" enctype="multipart/form-data">
+                    <p>file upload</p>
+                    <span>picName:</span><input name="picName" type="text" /><br />
+                    <input name="file" type="file" /><br /><br />
+                    <button type="submit">submit</button>
+                </form>
+
                 <div>
                     <p>返回结果</p>
                     {{result}}
                 </div>
 
-                <!-- <form method="POST" action="/file/upload" enctype="multipart/form-data">
-                    <p>file upload</p>
-                    <span>picName:</span><input name="picName" type="text" /><br />
-                    <input name="file" type="file" /><br /><br />
-                    <button type="submit">submit</button>
-                </form> -->
             </el-tab-pane>
 
             <el-tab-pane label="文件上传异步">
@@ -161,6 +171,7 @@
                 return {
                     baseUrl: 'http://localhost:3001', // axios base url 
                     // baseUrl: 'http://xyy.life:3001',
+                    fileList:[],
 
                     activeIndex: '/',
                     imageUrl: '',
@@ -220,8 +231,8 @@
                     currentPage: 1,
                     pageSize: 10,
 
-                    visible: false,
-                    num: 0,
+                    // visible: false,
+                    // num: 0,
 
                 }
             },
@@ -231,15 +242,11 @@
             methods: {
                 // 获取文件列表
                 getUploadFiles() {
-                    // let baseurl_ = 'http://localhost:3001'
-                    // let baseurl_ = 'http://xyy.life:3001'
                     let params = {
                         page: this.currentPage,
                         limit: this.pageSize,
                         fileName: this.fileName,
                         fileType: this.typeValue,
-                        // startTtime:this.timeValue[0],
-                        // endTtime:this.timeValue[1]
                     };
                     if (this.timeValue) {
                         params.startTime = this.timeValue[0]
@@ -322,9 +329,9 @@
                 },
                 // 上传之前做些什么
                 beforeAvatarUpload(file) {
+                    console.log('beforeAvatarUpload', file)
                     // const isJPG = file.type === 'image/jpeg';
                     const isLt2M = file.size / 1024 / 1024 < 10;
-
                     // if (!isJPG) {
                     //     this.$message.error('上传头像图片只能是 JPG 格式!');
                     // }
@@ -333,6 +340,22 @@
                     }
                     // return isJPG && isLt2M;
                     return isLt2M;
+                },
+                submitUpload() {
+                    console.log('submitUpload',this.$refs.uploadBox)
+                    console.log('submitUpload',this.$refs.uploadBox.val)
+                    console.log('submitUpload',this.$refs.uploadBox.value)
+                    // console.log('submitUpload',this.fileList)
+                    // this.$refs.uploadBox.submit();
+                },
+                handleRemove(file, fileList) {
+                    console.log(file, fileList);
+                },
+                handlePreview(file) {
+                    console.log(file);
+                },
+                handleError(err, file, fileList) {
+                    console.log(err, file, fileList);
                 },
 
                 // 上传文件
