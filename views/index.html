@@ -100,22 +100,20 @@
                             <el-tag v-if="row.success" type="success">成功</el-tag>
                             <div v-else v-text="row.message">
                             </div>
-                            <!-- <el-tag v-else type="warning">失败</el-tag> -->
                         </template>
                     </el-table-column>
                     <el-table-column label="操作">
                         <template slot-scope="scope">
-                            <!-- <el-button size="mini" @click="handleEdit(scope.$index, scope.row)">编辑</el-button> -->
                             <el-button size="mini" type="danger">删除</el-button>
                             <el-button size="mini" type="primary">下载</el-button>
-                            <!-- <el-button size="mini" type="danger">删除</el-button> -->
                         </template>
                     </el-table-column>
                 </el-table>
 
-                <!-- <el-dialog :visible.sync="visible" title="Hello world">
-                    <p>Try Element</p>
-                </el-dialog> -->
+                <el-pagination style="margin: 20px auto; " @size-change="handleSizeChange"
+                    @current-change="handleCurrentChange" :current-page="currentPage" :page-sizes="[10, 20, 30, 40]"
+                    :page-size="pageSize" layout="total, sizes, prev, pager, next, jumper" :total="total">
+                </el-pagination>
             </el-tab-pane>
         </el-tabs>
     </div>
@@ -143,15 +141,48 @@
 
                     filesList: [],
                     total: 0,
+                    currentPage: 1,
+                    pageSize: 10,
 
                     visible: false,
                     num: 0,
+
                 }
             },
             created() {
                 // this.fun()
             },
             methods: {
+                // 获取文件列表
+                getUploadFiles() {
+                    let baseurl_ = 'http://localhost:3001'
+                    // let baseurl_ = 'http://xyy.life:3001'
+                    var params = {
+                        page: this.currentPage,
+                        limit: this.pageSize,
+                    };
+                    axios.get(`${baseurl_}/api/file`, { params: params })
+                        .then(res => {
+                            if (res?.data && res.data.code === 20000) {
+                                console.log(res.data)
+                                this.filesList = res.data.data?.list || []
+                                this.total = res.data.data?.total || 0
+                            }
+
+                        })
+                        .catch(error => {
+                            console.log(error)
+                        })
+                },
+                handleSizeChange(val) {
+                    this.pageSize = val
+                    this.getUploadFiles()
+                },
+                handleCurrentChange(val) {
+                    this.currentPage = val
+                    this.getUploadFiles()
+                },
+                
                 // 上传成功回调函数
                 handleAvatarSuccess(res, file) {
                     this.result = res
@@ -171,29 +202,7 @@
                     // return isJPG && isLt2M;
                     return isLt2M;
                 },
-                // 获取文件列表
-                getUploadFiles() {
-                    let baseurl_ = 'http://localhost:3001'
-                    // let baseurl_ = 'http://xyy.life:3001'
-                    var params = {
-                        page: 1,
-                        limit: 10,
-                    };
-                    axios.get(`${baseurl_}/api/file`, { params: params })
-                        .then(res => {
-                            console.log(res)
-                            if (res?.data && res.data.code === 20000) {
-                                this.filesList = res.data.data?.list || []
-                                this.total = res.data.data?.total || 0
-                                console.log(this.filesList)
-                                console.log(this.total)
-                            }
 
-                        })
-                        .catch(error => {
-                            console.log(error)
-                        })
-                },
                 // 上传文件
                 requestEvent(options) {
                     try {
