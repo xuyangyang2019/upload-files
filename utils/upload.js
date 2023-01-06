@@ -36,6 +36,7 @@ function getSuffixName(fileName) {
  * @return {promise}
  */
 function uploadFile(ctx, options = {}) {
+  // 根据日期生成目录
   let nowDay = new Date()
   let defalutDir =
     nowDay.getFullYear() +
@@ -53,7 +54,10 @@ function uploadFile(ctx, options = {}) {
 
   let req = ctx.req
   let res = ctx.res
-  const bb = busboy({ headers: req.headers })
+
+  console.log(req.headers)
+
+  const bb = busboy({ headers: req.headers, defParamCharset: 'utf8' })
 
   return new Promise((resolve, reject) => {
     let result = {
@@ -70,24 +74,23 @@ function uploadFile(ctx, options = {}) {
 
     // 解析请求文件事件
     bb.on('file', (name, file, info) => {
-      // console.log('file name:', name)
-      // console.log('file file:', file)
-      // console.log('file info:', info)
+      console.log('file name:', name)
       const { filename, encoding, mimeType } = info
+      console.log('file filename:', filename)
 
       // result.name = name
       result = { ...result, ...info }
 
       // 生成随机文件名
-      let fileName =
+      let saveName =
         Math.random().toString(16).substr(2) + '.' + getSuffixName(filename)
 
       // 保存的路径
-      let _uploadFilePath = path.join(filePath, fileName)
+      let _uploadFilePath = path.join(filePath, saveName)
       let saveTo = path.join(_uploadFilePath)
 
       result.saveTo = saveTo
-      result.url = `//${ctx.host}/files/${fileType}/${fileName}`
+      result.url = `http://${ctx.host}/files/${fileType}/${saveName}`
 
       // 文件保存到指定路径
       file.pipe(fs.createWriteStream(saveTo))
