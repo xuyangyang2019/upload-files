@@ -85,7 +85,8 @@
 
             <el-tab-pane label="文件管理">
                 <el-row type="flex" aling="middle" style="margin: 10px 0;">
-                    <el-input v-model="fileName" clearable style="width: 200px;margin-right: 10px;" placeholder="请输入文件名">
+                    <el-input v-model="fileName" clearable style="width: 200px;margin-right: 10px;"
+                        placeholder="请输入文件名">
                     </el-input>
                     <el-select v-model="typeValue" style="width: 200px;margin-right: 10px;" placeholder="请选择文件类型">
                         <el-option v-for="item in typeOptions" :key="item.value" :label="item.label"
@@ -107,7 +108,7 @@
                         <template slot-scope="{row}">
                             <div>
                                 <p v-text="row.url"></p>
-                                <img v-if="row.mimeType === 'image/jpeg'" style="height:100px;width: auto;"
+                                <img v-if="row.mimeType.startsWith('image')" style="height:100px;width: auto;"
                                     :src="row.url" />
                             </div>
                         </template>
@@ -125,8 +126,8 @@
                         </template>
                     </el-table-column>
                     <el-table-column label="操作">
-                        <template slot-scope="scope">
-                            <el-button size="mini" type="danger">删除</el-button>
+                        <template slot-scope="{row}">
+                            <el-button size="mini" type="danger" @click="deleteFile(row)">删除</el-button>
                             <el-button size="mini" type="primary">下载</el-button>
                         </template>
                     </el-table-column>
@@ -157,6 +158,9 @@
             el: '#app',
             data: function () {
                 return {
+                    baseUrl: 'http://localhost:3001', // axios base url 
+                    // baseUrl: 'http://xyy.life:3001',
+
                     activeIndex: '/',
                     imageUrl: '',
                     result: {},
@@ -167,11 +171,13 @@
                         value: 'all',
                         label: '全部'
                     }, {
-                        value: 'image/jpeg',
+                        value: 'image',
+                        // value: 'image/jpeg',
                         label: '图片'
                     }, {
-                        value: 'video/mp4',
-                        label: 'MP4'
+                        // value: 'video/mp4',
+                        value: 'video',
+                        label: '视频'
                     }, {
                         value: 'audio/mpeg',
                         label: 'MP3'
@@ -224,7 +230,7 @@
             methods: {
                 // 获取文件列表
                 getUploadFiles() {
-                    let baseurl_ = 'http://localhost:3001'
+                    // let baseurl_ = 'http://localhost:3001'
                     // let baseurl_ = 'http://xyy.life:3001'
                     let params = {
                         page: this.currentPage,
@@ -238,14 +244,13 @@
                         params.startTime = this.timeValue[0]
                         params.endTime = this.timeValue[1]
                     }
-                    axios.get(`${baseurl_}/api/file`, { params: params })
+                    axios.get(`${this.baseUrl}/api/file`, { params: params })
                         .then(res => {
                             if (res?.data && res.data.code === 20000) {
                                 console.log(res.data)
                                 this.filesList = res.data.data?.list || []
                                 this.total = res.data.data?.total || 0
                             }
-
                         })
                         .catch(error => {
                             console.log(error)
@@ -258,6 +263,36 @@
                 handleCurrentChange(val) {
                     this.currentPage = val
                     this.getUploadFiles()
+                },
+                // 删除记录
+                deleteFile(row) {
+                    console.log('deleteFile:', row)
+                    this.$confirm('此操作将永久删除该文件, 是否继续?', '提示', {
+                        confirmButtonText: '确定',
+                        cancelButtonText: '取消',
+                        type: 'warning'
+                    }).then(() => {
+                        axios.delete(`${this.baseUrl}/api/file/${row._id}`)
+                            .then(res => {
+                                if (res?.data && res.data.code === 20000) {
+                                    this.$message({
+                                        type: 'success',
+                                        message: '删除成功!',
+                                        duratio: 1000
+                                    });
+                                    this.getUploadFiles()
+                                }
+                            })
+                            .catch(error => {
+                                console.log(error)
+                            })
+                    }).catch(() => {
+                        this.$message({
+                            type: 'info',
+                            message: '已取消删除'
+                        });
+                    });
+
                 },
 
                 // 上传成功回调函数

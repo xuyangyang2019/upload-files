@@ -11,8 +11,10 @@ module.exports = {
     if (fileName) {
       queryCondition.filename = new RegExp(fileName) // 模糊查询
     }
+    // 文件类型
     if (fileType && fileType !== 'all') {
-      queryCondition.mimeType = fileType // 模糊查询
+      queryCondition.mimeType = new RegExp(fileType) // 模糊查询
+      // queryCondition.mimeType = fileType // 模糊查询
     }
     // 时间段
     if (startTime && endTime) {
@@ -29,5 +31,14 @@ module.exports = {
     )
     const total = await FileService.count(queryCondition)
     ctx.rest({ list: result, total: total.count })
+  },
+  // 删除文件记录
+  'DELETE /api/file/:id': async (ctx) => {
+    const { id } = ctx.params
+    // 删除本地文件
+
+    // 删除记录
+    // const result = await FileService.delete({ _id: id })
+    // ctx.rest(result)
   },
 }
