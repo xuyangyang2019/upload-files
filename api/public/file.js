@@ -3,13 +3,16 @@ const FileService = require('../../mongodb/services/FileService')
 module.exports = {
   // 按条件查询文件记录
   'GET /api/file': async (ctx) => {
-    const { page, limit, filename, startTime, endTime } = ctx.request.query
+    const { page, limit, fileName, fileType, startTime, endTime } =
+      ctx.request.query
 
     const queryCondition = {}
     // 文件名
-    if (filename) {
-      // queryCondition.filename = filename
-      queryCondition.filename = new RegExp(filename) // 模糊查询
+    if (fileName) {
+      queryCondition.filename = new RegExp(fileName) // 模糊查询
+    }
+    if (fileType && fileType !== 'all') {
+      queryCondition.mimeType = fileType // 模糊查询
     }
     // 时间段
     if (startTime && endTime) {
