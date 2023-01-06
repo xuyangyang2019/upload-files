@@ -1,4 +1,5 @@
 const FileService = require('../../mongodb/services/FileService')
+const fs = require('fs')
 
 module.exports = {
   // 按条件查询文件记录
@@ -35,10 +36,18 @@ module.exports = {
   // 删除文件记录
   'DELETE /api/file/:id': async (ctx) => {
     const { id } = ctx.params
-    // 删除本地文件
-
-    // 删除记录
-    // const result = await FileService.delete({ _id: id })
-    // ctx.rest(result)
+    // 物理删除文件
+    const fileRecord = await FileService.findById(id)
+    if (fileRecord._id && fileRecord.saveTo) {
+      // 文件是否存在
+      let exist = fs.existsSync(fileRecord.saveTo)
+      if (exist) {
+        // 删除本地文件
+        fs.unlinkSync(fileRecord.saveTo)
+      }
+    }
+    // 删除数据库中的记录
+    const result = await FileService.delete({ _id: id })
+    ctx.rest(result)
   },
 }
