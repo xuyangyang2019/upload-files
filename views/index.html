@@ -17,6 +17,17 @@
     <script src="/js/axios.js"></script>
 
     <style>
+        #app {
+            height: 100vh;
+            width: 100vw;
+            padding: 10px;
+            overflow: hidden;
+            box-sizing: border-box;
+
+            display: flex;
+            flex-direction: column;
+        }
+
         /* .avatar-uploader .el-upload {
             border: 1px dashed #d9d9d9;
             border-radius: 6px;
@@ -28,19 +39,19 @@
 </head>
 
 <body style="margin: 0; overflow: hidden;">
-    <div id="app" style="height: 100vh;width: 100vw; padding: 10px; overflow: auto;">
+    <div id="app">
+
         <el-row type="flex" align="middle" justify="center">
             <h1>Welcome to file uplaod</h1>
         </el-row>
+        <el-row style="margin-bottom:10px;" type="flex" align="middle" justify="start">
+            <a href="/files">
+                <i class="el-icon-setting"></i>
+                <span slot="title">文件目录</span>
+            </a>
+        </el-row>
 
-        <a href="/files">
-            <i class="el-icon-setting"></i>
-            <span slot="title">文件目录</span>
-        </a>
-
-        <hr />
-
-        <el-tabs :tab-position="'left'">
+        <el-tabs :tab-position="'left'" style=" flex: 1 1 auto; ">
             <el-tab-pane label="文件上传">
                 <el-upload class="upload-demo" drag action="/api/upload" multiple :show-file-list="true"
                     :on-success="handleAvatarSuccess" :before-upload="beforeAvatarUpload">
@@ -73,13 +84,17 @@
             </el-tab-pane>
 
             <el-tab-pane label="文件管理">
-                <el-button type="primary" @click="getUploadFiles">查询文件</el-button>
-                <el-table :data="filesList" style="width: 100%">
-                    <el-table-column type="index" label="-" width="50">
-                    </el-table-column>
-                    <el-table-column prop="filename" label="文件名">
+                <el-row type="flex" aling="middle">
+                    文件名
+                    文件类型
+                    时间
 
-                    </el-table-column>
+                    <el-button type="primary" @click="getUploadFiles">查询文件</el-button>
+                </el-row>
+
+                <el-table :data="filesList" style="width: 100%" height="70vh">
+                    <el-table-column type="index" label="-" width="50"></el-table-column>
+                    <el-table-column prop="filename" label="文件名"></el-table-column>
                     <el-table-column prop="mimeType" label="文件类型"></el-table-column>
                     <el-table-column prop="url" label="地址">
                         <template slot-scope="{row}">
@@ -182,7 +197,7 @@
                     this.currentPage = val
                     this.getUploadFiles()
                 },
-                
+
                 // 上传成功回调函数
                 handleAvatarSuccess(res, file) {
                     this.result = res
