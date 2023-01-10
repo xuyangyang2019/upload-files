@@ -17,6 +17,32 @@ const log4j = require('./utils/log4j')
 // 解析文件或目录
 const content = require('./utils/content')
 const mimes = require('./utils/mimes')
+// 解析资源类型
+function parseMime(url) {
+  console.log(url)
+  let extName = path.extname(url)
+  extName = extName ? extName.slice(1) : 'unknown'
+  console.log(extName)
+  return mimes[extName]
+}
+
+// /**
+//  * 用Promise封装异步读取文件方法
+//  * @param  {string} page html文件名称
+//  * @return {promise}
+//  */
+// function renderFun(page) {
+//   return new Promise((resolve, reject) => {
+//     let viewUrl = `./views/${page}`
+//     fs.readFile(viewUrl, 'binary', (err, data) => {
+//       if (err) {
+//         reject(err)
+//       } else {
+//         resolve(data)
+//       }
+//     })
+//   })
+// }
 
 const app = new Koa()
 
@@ -57,9 +83,9 @@ app.use(restify()) // 给ctx添加一个rest()方法
 // // 装载所有子路由
 // let router = new Router()
 // router.use('/page', page.routes(), page.allowedMethods())
-
 // app.use(router.routes()).use(router.allowedMethods())
 app.use(routers.routes(), routers.allowedMethods())
+
 // static文件夹作为 静态资源
 // 由于9.4.0时，通配符取消了，改为了正则的字符，于是*要改为"/(.*)"这样才行，不然会报错。
 // router.all(
@@ -68,66 +94,64 @@ app.use(routers.routes(), routers.allowedMethods())
 //     maxage: 7 * 24 * 60 * 60 * 1000, //7天
 //   })
 // )
-
 app.use(static(__dirname + '/static'), {
   //     maxage: 30 * 24 * 60 * 60 * 1000, //30天缓存周期
   //     index: 'index.html', // 默认文件
 }) // http://localhost:3000/css/style.css
 
 // 处理跨域
-app.use(cors()) // 全部允许跨域
+// 全部允许跨域
+// app.use(cors())
 // 设置多个域名可跨域
-// app.use(
-//   cors({
-//     origin: function (ctx) {
-//       // 设置允许来自指定域名请求
-//       const whiteList = ['http://xyy.life', 'http://localhost:3001'] // 可跨域白名单
-//       const url = ctx.header.referer
-//         ? ctx.header.referer.substr(0, ctx.header.referer.length - 1)
-//         : ''
-//       if (whiteList.includes(url)) {
-//         return url // 注意，这里域名末尾不能带/，否则不成功，所以在之前我把/通过substr干掉了
-//       }
-//       return 'http://localhost::3001' // 默认允许本地请求3000端口可跨域
-//     },
-//     maxAge: 5, // 指定本次预检请求的有效期，单位为秒。
-//     credentials: true, // 是否允许发送Cookie
-//     allowMethods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'], // 设置所允许的HTTP请求方法
-//     allowHeaders: ['Content-Type', 'Authorization', 'Accept'], // 设置服务器支持的所有头信息字段
-//     exposeHeaders: ['WWW-Authenticate', 'Server-Authorization'], // 设置获取其他自定义字段
-//   })
-// )
+app.use(
+  cors({
+    origin: function (ctx) {
+      // 设置允许来自指定域名请求
+      const whiteList = ['http://xyy.life', 'http://localhost:3001'] // 可跨域白名单
+      const url = ctx.header.referer ? ctx.header.referer.substr(0, ctx.header.referer.length - 1) : ''
+      if (whiteList.includes(url)) {
+        return url // 注意，这里域名末尾不能带/，否则不成功，所以在之前我把/通过substr干掉了
+      }
+      return 'http://localhost::3001' // 默认允许本地请求3000端口可跨域
+    },
+    maxAge: 5, // 指定本次预检请求的有效期，单位为秒。
+    credentials: true, // 是否允许发送Cookie
+    allowMethods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'], // 设置所允许的HTTP请求方法
+    allowHeaders: ['Content-Type', 'Authorization', 'Accept'], // 设置服务器支持的所有头信息字段
+    exposeHeaders: ['WWW-Authenticate', 'Server-Authorization'] // 设置获取其他自定义字段
+  })
+)
 
 app.use(async (ctx) => {
+  // // 解析post body
+  // if (ctx.url === '/' && ctx.method === 'POST') {
+  //   // 当POST请求的时候，解析POST表单里的数据，并显示出来
+  //   let postData = ctx.request.body
+  //   ctx.body = postData
+  // }
+
   // 下载文件
   if (ctx.url.startsWith('/files') && ctx.method === 'GET') {
+    // 解析请求内容的类型
+    let _mime = parseMime(ctx.url)
+    // 如果有对应的文件类型，就配置上下文的类型
+    if (_mime) {
+      ctx.type = _mime
+    }
+    
     // 获取静态资源内容，有可能是文件内容，目录，或404
     let _content = await content(ctx, __dirname)
-
-    // 解析请求内容的类型
-    let extName = path.extname(ctx.url)
-    extName = extName ? extName.slice(1) : 'unknown'
-    let _mime = mimes[extName]
-
-    // 如果有对应的文件类型，
-    if (_mime) {
+    
+    // 输出静态资源内容
+    if (_mime && _mime.indexOf('image/') >= 0) {
       console.log(_mime)
-      // 配置上下文的类型
-      ctx.type = _mime
-
-      // 输出静态资源内容
-      if (_mime.startsWith('image/')) {
-        // 如果是图片，则用node原生res，输出二进制数据
-        ctx.res.writeHead(200)
-        ctx.res.write(_content, 'binary')
-        ctx.res.end()
-      } else {
-        // 其他则输出文本
-        ctx.body = _content
-      }
+      // 如果是图片，则用node原生res，输出二进制数据
+      ctx.res.writeHead(200)
+      ctx.res.write(_content, 'binary')
+      ctx.res.end()
     } else {
-      // 其他请求显示404
-      ctx.body = '<h1>404！！！ o(╯□╰)o</h1>'
+      // 其他则输出文本
+      ctx.body = _content
     }
   } else {
     // 其他请求显示404

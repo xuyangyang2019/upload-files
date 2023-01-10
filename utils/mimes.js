@@ -1,23 +1,28 @@
 let mimes = {
   css: 'text/css',
   less: 'text/css',
-  gif: 'image/gif',
+  xml: 'text/xml',
   html: 'text/html',
-  ico: 'image/x-icon',
-  jpeg: 'image/jpeg',
-  jpg: 'image/jpeg',
-  js: 'text/javascript',
-  json: 'application/json',
-  pdf: 'application/pdf',
-  png: 'image/png',
-  svg: 'image/svg+xml',
-  swf: 'application/x-shockwave-flash',
-  tiff: 'image/tiff',
   txt: 'text/plain',
+  js: 'text/javascript',
+
+  png: 'image/png',
+  gif: 'image/gif',
+  jpg: 'image/jpeg',
+  jpeg: 'image/jpeg',
+  tiff: 'image/tiff',
+  ico: 'image/x-icon',
+  svg: 'image/svg+xml',
+
+  pdf: 'application/pdf',
+  json: 'application/json',
+  log: 'application/octet-stream',
+  swf: 'application/x-shockwave-flash',
+
   wav: 'audio/x-wav',
   wma: 'audio/x-ms-wma',
+
   wmv: 'video/x-ms-wmv',
-  xml: 'text/xml',
 }
 
 module.exports = mimes
