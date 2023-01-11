@@ -1,6 +1,5 @@
 const Koa = require('koa')
 const path = require('path')
-// const fs = require('fs')
 
 const bodyParser = require('koa-bodyparser')
 const static = require('koa-static')
@@ -8,19 +7,15 @@ const views = require('koa-views')
 const cors = require('koa2-cors') // ajax 跨域问题
 const routers = require('./routers/index')
 
-const loggerAsync = require('./middlewares/logger-async')
+const loggerAsync = require('./middlewares/logger-async') // 日志中间件
 const { restify } = require('./middlewares/rest') // rest中间件
 const error = require('./middlewares/error') // 错误处理 和 返回处理
 
-const log4j = require('./utils/log4j')
-
 // 解析文件或目录
-const content = require('./utils/content')
 const mime = require('mime')
+const content = require('./utils/content')
 
 const app = new Koa()
-
-// 使用中间件
 
 // 加载日志中间件
 app.use(loggerAsync())
@@ -123,11 +118,6 @@ app.use(async (ctx) => {
         ctx.res.end()
       } else if (_mime.startsWith('application/')) {
         console.log('application/')
-        // ctx.res.writeHead(200)
-        // ctx.res.write(_content, 'utf8')
-        // ctx.res.end()
-
-        // ctx.response.type = 'application/vnd.ms-excel';
         ctx.body = _content
       } else {
         // 其他则输出文本
@@ -144,13 +134,10 @@ app.use(async (ctx) => {
 
 // 错误处理
 app.on('error', (err, ctx) => {
-  // logError(ctx, err)
-  // console.log(err)
-  // const logText = `${ctx.method} ${ctx.url} ${ctx.status}  `
-  log4j.error(err)
+  const logText = `${ctx.method} ${ctx.url} ${ctx.status}  `
+  console.log(logText, err)
 })
 
 app.listen(3001, () => {
-  // console.log('[demo] upload-pic-async is starting at port 3000')
   console.log('upload-files is starting at: http://localhost:3001')
 })

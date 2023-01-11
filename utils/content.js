@@ -8,7 +8,6 @@ const path = require('path')
  * @return  {string} 请求获取到的本地内容
  */
 async function content(ctx, fullStaticPath, mime) {
-
   // 封装请求资源的完绝对径
   let reqPath = path.join(fullStaticPath, ctx.url)
   console.log(reqPath)
@@ -33,23 +32,26 @@ async function content(ctx, fullStaticPath, mime) {
       for (const contentItem of contentList.sort()) {
         content = `${content}
         <li>
-          <a href="${ctx.url === '/' ? '' : ctx.url}/${contentItem}">${contentItem}</a>
-        </li>` 
+          <a href="${
+            ctx.url === '/' ? '' : ctx.url
+          }/${contentItem}">${contentItem}</a>
+        </li>`
       }
       content = `<ul>${content}</ul>`
     } else {
       // 如果是文件
       // "utf8" | "binary" | "ascii" | "utf-8" | "utf16le" | "ucs2" | "ucs-2" | "base64" | "latin1" | "hex")
-      let encoding = 'utf8' // 默认
       if (mime) {
         if (mime.startsWith('image/')) {
-          encoding = 'binary'
-        } else if (mime.startsWith('application/')) {
-          encoding = 'binary'
+          content = fs.readFileSync(reqPath, 'binary')
+        } else if (mime.startsWith('text/')) {
+          content = fs.readFileSync(reqPath, 'utf8')
+        } else {
+          content = fs.readFileSync(reqPath, 'binary')
         }
+      } else {
+        content = fs.readFileSync(reqPath)
       }
-      console.log('cotent encoding', encoding)
-      content = fs.readFileSync(reqPath, encoding)
     }
   }
 

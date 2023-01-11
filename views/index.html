@@ -60,21 +60,12 @@
                     <div class="el-upload__tip" slot="tip">文件大小不能超过10M</div>
                 </el-upload>
 
-                <!-- <el-upload class="upload-demo" ref="uploadBox" action="/api/upload" :on-preview="handlePreview"
-                    :on-remove="handleRemove" :file-list="fileList" :auto-upload="false" :on-error = "handleError">
-
-                    <el-button slot="trigger" size="small" type="primary">选取文件</el-button>
-
-                    <el-button style="margin-left: 10px;" size="small" type="success" @click="submitUpload">上传到服务器
-                    </el-button>
-                </el-upload> -->
-
-                <form method="POST" action="/file/upload" enctype="multipart/form-data">
+                <!-- <form method="POST" action="/file/upload" enctype="multipart/form-data">
                     <p>file upload</p>
                     <span>picName:</span><input name="picName" type="text" /><br />
                     <input name="file" type="file" /><br /><br />
                     <button type="submit">submit</button>
-                </form>
+                </form> -->
 
                 <div>
                     <p>返回结果</p>
@@ -85,7 +76,6 @@
 
             <el-tab-pane label="文件上传异步">
                 <el-button class="btn" id="J_UploadPictureBtn" @click="uploadImg">上传图片</el-button>
-
                 <hr />
                 <p>上传进度<span id="J_UploadProgress">0</span>%</p>
                 <p>上传结果图片</p>
@@ -240,7 +230,6 @@
                 }
             },
             created() {
-                // this.fun()
             },
             methods: {
                 // 换算文件大小
@@ -361,22 +350,6 @@
                     // return isJPG && isLt2M;
                     return isLt2M;
                 },
-                submitUpload() {
-                    console.log('submitUpload', this.$refs.uploadBox)
-                    console.log('submitUpload', this.$refs.uploadBox.val)
-                    console.log('submitUpload', this.$refs.uploadBox.value)
-                    // console.log('submitUpload',this.fileList)
-                    // this.$refs.uploadBox.submit();
-                },
-                handleRemove(file, fileList) {
-                    console.log(file, fileList);
-                },
-                handlePreview(file) {
-                    console.log(file);
-                },
-                handleError(err, file, fileList) {
-                    console.log(err, file, fileList);
-                },
 
                 // 上传文件
                 requestEvent(options) {
@@ -460,14 +433,6 @@
                         },
                     })
                 }
-
-                // fun() {
-                //     if (this.num >= 100) return
-                //     setTimeout(() => {
-                //         this.num += 20
-                //         this.fun()
-                //     }, 1000)
-                // }
             },
         })
     </script>
