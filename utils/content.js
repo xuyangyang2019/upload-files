@@ -1,8 +1,5 @@
-const path = require('path')
 const fs = require('fs')
-
-// 封装读取目录内容方法
-const dir = require('./dir')
+const path = require('path')
 
 /**
  * 获取静态资源内容
@@ -11,6 +8,7 @@ const dir = require('./dir')
  * @return  {string} 请求获取到的本地内容
  */
 async function content(ctx, fullStaticPath, mime) {
+
   // 封装请求资源的完绝对径
   let reqPath = path.join(fullStaticPath, ctx.url)
   console.log(reqPath)
@@ -30,18 +28,17 @@ async function content(ctx, fullStaticPath, mime) {
 
     if (stat.isDirectory()) {
       // 如果为目录，则渲读取目录内容
-      // content = dir(ctx.url, reqPath)
       let contentList = fs.readdirSync(reqPath)
-      let html = `<ul>`
-      for (let [index, item] of contentList.entries()) {
-        html = `${html}
+      // for (let [index, item] of contentList.entries()) {}
+      for (const contentItem of contentList.sort()) {
+        content = `${content}
         <li>
-          <a href="${ctx.url === '/' ? '' : ctx.url}/${item}">${item}</a>
-        </li>`
+          <a href="${ctx.url === '/' ? '' : ctx.url}/${contentItem}">${contentItem}</a>
+        </li>` 
       }
-      html = `${html}</ul>`
-      content = html
+      content = `<ul>${content}</ul>`
     } else {
+      // 如果是文件
       // "utf8" | "binary" | "ascii" | "utf-8" | "utf16le" | "ucs2" | "ucs-2" | "base64" | "latin1" | "hex")
       let encoding = 'utf8' // 默认
       if (mime) {
