@@ -101,33 +101,34 @@ app.use(cors()) // 全部允许跨域
 app.use(async (ctx) => {
   // 下载文件
   if (ctx.url.startsWith('/files') && ctx.method === 'GET') {
-    // 获取静态资源内容，有可能是文件内容，目录，或404
-    let _content = await content(ctx, __dirname)
-
     // 解析请求内容的类型
     let extName = path.extname(ctx.url)
     extName = extName ? extName.slice(1) : 'unknown'
     let _mime = mimes[extName]
 
+    // 获取静态资源内容，有可能是文件内容，目录，或404
+    let _content = await content(ctx, __dirname, _mime)
+
     // 如果有对应的文件类型，
     if (_mime) {
-      console.log(_mime)
       // 配置上下文的类型
       ctx.type = _mime
-
       // 输出静态资源内容
       if (_mime.startsWith('image/')) {
         // 如果是图片，则用node原生res，输出二进制数据
         ctx.res.writeHead(200)
         ctx.res.write(_content, 'binary')
         ctx.res.end()
+      } else if (_mime.startsWith('application/')) {
+        ctx.res.writeHead(200)
+        ctx.res.write(_content, 'ascii')
+        ctx.res.end()
       } else {
         // 其他则输出文本
         ctx.body = _content
       }
     } else {
-      // 其他请求显示404
-      ctx.body = '<h1>404！！！ o(╯□╰)o</h1>'
+      ctx.body = _content
     }
   } else {
     // 其他请求显示404
