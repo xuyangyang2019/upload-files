@@ -38,12 +38,16 @@ function getSuffixName(fileName) {
 function uploadFile(ctx, options = {}) {
   // 根据日期生成目录
   let nowDay = new Date()
-  let defalutDir =
-    nowDay.getFullYear() +
-    '-' +
-    (nowDay.getMonth() + 1) +
-    '-' +
-    nowDay.getDate()
+  let yyyy = nowDay.getFullYear()
+  let MM = nowDay.getMonth() + 1
+  let dd = nowDay.getDate()
+  if (MM < 10) {
+    MM = '0' + MM
+  }
+  if (dd < 10) {
+    dd = '0' + dd
+  }
+  let defalutDir = yyyy + '-' + MM + '-' + dd
   let defalutPath = path.join(__dirname, '../files')
 
   // 以参数目录 加 文件类型作为 保存的目录
