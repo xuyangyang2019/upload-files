@@ -1,5 +1,5 @@
 const fs = require('fs')
-const mimes = require('./mimes')
+// const mime = require('mime')
 
 /**
  * 遍历读取目录内容（子目录，文件名）
@@ -8,25 +8,28 @@ const mimes = require('./mimes')
  */
 function walk(reqPath) {
   let files = fs.readdirSync(reqPath)
+  console.log(files)
+  // return files
 
-  let dirList = [],
-    fileList = []
+  let dirList = [] // 文件夹
+  let fileList = [] // 文件
   for (let i = 0, len = files.length; i < len; i++) {
     let item = files[i]
     let itemArr = item.split('.')
     let itemMime =
       itemArr.length > 1 ? itemArr[itemArr.length - 1] : 'undefined'
 
-    if (typeof mimes[itemMime] === 'undefined') {
+    // let mm = mime.getType(itemMime)
+    // console.log(item, itemArr, itemMime, mm)
+
+    // if (typeof mm === 'undefined') {
+    if (itemMime === 'undefined') {
       dirList.push(files[i])
     } else {
       fileList.push(files[i])
     }
   }
-
-  let result = dirList.concat(fileList)
-
-  return result
+  return dirList.concat(fileList)
 }
 
 module.exports = walk

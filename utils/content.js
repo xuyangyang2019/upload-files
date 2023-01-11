@@ -30,7 +30,17 @@ async function content(ctx, fullStaticPath, mime) {
 
     if (stat.isDirectory()) {
       // 如果为目录，则渲读取目录内容
-      content = dir(ctx.url, reqPath)
+      // content = dir(ctx.url, reqPath)
+      let contentList = fs.readdirSync(reqPath)
+      let html = `<ul>`
+      for (let [index, item] of contentList.entries()) {
+        html = `${html}
+        <li>
+          <a href="${ctx.url === '/' ? '' : ctx.url}/${item}">${item}</a>
+        </li>`
+      }
+      html = `${html}</ul>`
+      content = html
     } else {
       // "utf8" | "binary" | "ascii" | "utf-8" | "utf16le" | "ucs2" | "ucs-2" | "base64" | "latin1" | "hex")
       let encoding = 'utf8' // 默认
@@ -38,7 +48,7 @@ async function content(ctx, fullStaticPath, mime) {
         if (mime.startsWith('image/')) {
           encoding = 'binary'
         } else if (mime.startsWith('application/')) {
-          encoding = 'ascii'
+          encoding = 'binary'
         }
       }
       console.log('cotent encoding', encoding)
