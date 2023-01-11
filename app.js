@@ -16,7 +16,7 @@ const log4j = require('./utils/log4j')
 
 // 解析文件或目录
 const content = require('./utils/content')
-const mimes = require('./utils/mimes')
+const mime = require('mime')
 
 const app = new Koa()
 
@@ -104,7 +104,8 @@ app.use(async (ctx) => {
     // 解析请求内容的类型
     let extName = path.extname(ctx.url)
     extName = extName ? extName.slice(1) : 'unknown'
-    let _mime = mimes[extName]
+    let _mime = mime.getType(extName)
+    console.log(extName, _mime)
 
     // 获取静态资源内容，有可能是文件内容，目录，或404
     let _content = await content(ctx, __dirname, _mime)
@@ -113,6 +114,7 @@ app.use(async (ctx) => {
     if (_mime) {
       // 配置上下文的类型
       ctx.type = _mime
+
       // 输出静态资源内容
       if (_mime.startsWith('image/')) {
         // 如果是图片，则用node原生res，输出二进制数据
@@ -120,9 +122,13 @@ app.use(async (ctx) => {
         ctx.res.write(_content, 'binary')
         ctx.res.end()
       } else if (_mime.startsWith('application/')) {
-        ctx.res.writeHead(200)
-        ctx.res.write(_content, 'ascii')
-        ctx.res.end()
+        console.log('application/')
+        // ctx.res.writeHead(200)
+        // ctx.res.write(_content, 'utf8')
+        // ctx.res.end()
+
+        // ctx.response.type = 'application/vnd.ms-excel';
+        ctx.body = _content
       } else {
         // 其他则输出文本
         ctx.body = _content
