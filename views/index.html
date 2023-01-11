@@ -116,10 +116,7 @@
                     <el-table-column prop="mimeType" label="文件类型"></el-table-column>
                     <!-- <el-table-column prop="encoding" label="编码方式"></el-table-column> -->
                     <!-- <el-table-column prop="saveTo" label="文件类型"></el-table-column> -->
-                    <el-table-column prop="fileSize" label="文件大小(KB)" width="180">
-                        <template slot-scope="{row}">
-                            {{ row.fileSize/1024 }}
-                        </template>
+                    <el-table-column prop="fileSize" label="文件大小" width="180" :formatter="sizeFormatter">
                     </el-table-column>
                     <el-table-column prop="url" label="地址">
                         <template slot-scope="{row}">
@@ -246,6 +243,23 @@
                 // this.fun()
             },
             methods: {
+                // 换算文件大小
+                sizeFormatter(row) {
+                    let fileSize = row.fileSize
+                    if (fileSize) {
+                        if (fileSize > 1073741824) {
+                            return (fileSize / 1073741824).toFixed(2) + ' G'
+                        } else if (fileSize > 1048576) {
+                            return (fileSize / 1048576).toFixed(2) + ' MB'
+                        } else if (fileSize > 1024) {
+                            return (fileSize / 1024).toFixed(2) + ' KB'
+                        } else {
+                            return fileSize + ' B'
+                        }
+                    }
+                    return row.fileSize
+                },
+
                 // 获取文件列表
                 getUploadFiles() {
                     let params = {
