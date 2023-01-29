@@ -10,7 +10,6 @@ const path = require('path')
 async function content(ctx, fullStaticPath, mime) {
   // 封装请求资源的完绝对径
   let reqPath = path.join(fullStaticPath, ctx.url)
-  console.log(reqPath)
 
   // 判断请求路径是否为存在目录或者文件
   let exist = fs.existsSync(reqPath)

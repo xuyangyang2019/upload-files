@@ -100,7 +100,6 @@ app.use(async (ctx) => {
     let extName = path.extname(ctx.url)
     extName = extName ? extName.slice(1) : 'unknown'
     let _mime = mime.getType(extName)
-    console.log(extName, _mime)
 
     // 获取静态资源内容，有可能是文件内容，目录，或404
     let _content = await content(ctx, __dirname, _mime)

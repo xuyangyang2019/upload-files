@@ -338,7 +338,6 @@
                 },
                 // 上传之前做些什么
                 beforeAvatarUpload(file) {
-                    console.log('beforeAvatarUpload', file)
                     // const isJPG = file.type === 'image/jpeg';
                     const isLt2M = file.size / 1024 / 1024 < 10;
                     // if (!isJPG) {
@@ -398,7 +397,6 @@
                 // 上传的回调函数判断
                 uploadAction(options) {
                     if (!UtilType.isJSON(options)) {
-                        console.log('upload options is null')
                         return
                     }
                     let _options = {}

@@ -19,10 +19,8 @@ const content = require('./utils/content')
 const mimes = require('./utils/mimes')
 // 解析资源类型
 function parseMime(url) {
-  console.log(url)
   let extName = path.extname(url)
   extName = extName ? extName.slice(1) : 'unknown'
-  console.log(extName)
   return mimes[extName]
 }
 
@@ -144,7 +142,6 @@ app.use(async (ctx) => {
     
     // 输出静态资源内容
     if (_mime && _mime.indexOf('image/') >= 0) {
-      console.log(_mime)
       // 如果是图片，则用node原生res，输出二进制数据
       ctx.res.writeHead(200)
       ctx.res.write(_content, 'binary')
@@ -162,12 +159,10 @@ app.use(async (ctx) => {
 // 错误处理
 app.on('error', (err, ctx) => {
   // logError(ctx, err)
-  // console.log(err)
   // const logText = `${ctx.method} ${ctx.url} ${ctx.status}  `
   log4j.error(err)
 })
 
 app.listen(3001, () => {
-  // console.log('[demo] upload-pic-async is starting at port 3000')
   console.log('upload-files is starting at: http://localhost:3001')
 })

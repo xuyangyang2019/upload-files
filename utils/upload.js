@@ -59,8 +59,6 @@ function uploadFile(ctx, options = {}) {
   let req = ctx.req
   let res = ctx.res
 
-  console.log(req.headers)
-
   const bb = busboy({ headers: req.headers, defParamCharset: 'utf8' })
 
   return new Promise((resolve, reject) => {
@@ -78,9 +76,7 @@ function uploadFile(ctx, options = {}) {
 
     // 解析请求文件事件
     bb.on('file', (name, file, info) => {
-      console.log('file name:', name)
       const { filename, encoding, mimeType } = info
-      console.log('file filename:', filename)
 
       // result.name = name
       result = { ...result, ...info }
@@ -101,11 +97,9 @@ function uploadFile(ctx, options = {}) {
 
       file
         .on('data', (data) => {
-          // console.log(`File [${name}] size: ${data.length} bytes`)
           result.fileSize = result.fileSize + data.length
         })
         .on('close', () => {
-          // console.log(`File [${name}] done`)
           result.success = true
           result.message = '文件上传成功'
         })
@@ -113,21 +107,16 @@ function uploadFile(ctx, options = {}) {
 
     // 解析表单中其他字段信息
     bb.on('field', (name, val, info) => {
-      // console.log('field name:', name)
-      // console.log('field val:', val)
-      // console.log('field info:', info)
       result.formData[name] = inspect(val)
     })
 
     // 解析结束事件
     bb.on('finish', function () {
-      // console.log('finish:文件上结束', result)
       resolve(result)
     })
 
     // 解析错误事件
     bb.on('error', function (err) {
-      // console.log('error:文件上出错')
       result.message = inspect(err)
       reject(result)
     })
