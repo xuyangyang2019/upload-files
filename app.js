@@ -110,19 +110,21 @@ app.use(async (ctx) => {
       // 配置上下文的类型
       ctx.type = _mime
 
-      // 输出静态资源内容
-      if (_mime.startsWith('image/')) {
-        // 如果是图片，则用node原生res，输出二进制数据
-        ctx.res.writeHead(200)
-        ctx.res.write(_content, 'binary')
-        ctx.res.end()
-      } else if (_mime.startsWith('application/')) {
-        console.log('application/')
-        ctx.body = _content
-      } else {
-        // 其他则输出文本
-        ctx.body = _content
-      }
+      // 用node原生res，输出二进制数据
+      ctx.res.writeHead(200)
+      ctx.res.write(_content, 'binary')
+      ctx.res.end()
+
+      // // 输出静态资源内容
+      // if (_mime.startsWith('text/')) {
+      //   // 其他则输出文本
+      //   ctx.body = _content
+      // } else {
+      //   // 如果是图片，则用node原生res，输出二进制数据
+      //   ctx.res.writeHead(200)
+      //   ctx.res.write(_content, 'binary')
+      //   ctx.res.end()
+      // }
     } else {
       ctx.body = _content
     }

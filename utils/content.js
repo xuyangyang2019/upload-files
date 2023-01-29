@@ -42,13 +42,12 @@ async function content(ctx, fullStaticPath, mime) {
       // 如果是文件
       // "utf8" | "binary" | "ascii" | "utf-8" | "utf16le" | "ucs2" | "ucs-2" | "base64" | "latin1" | "hex")
       if (mime) {
-        if (mime.startsWith('image/')) {
-          content = fs.readFileSync(reqPath, 'binary')
-        } else if (mime.startsWith('text/')) {
-          content = fs.readFileSync(reqPath, 'utf8')
-        } else {
-          content = fs.readFileSync(reqPath, 'binary')
-        }
+        content = fs.readFileSync(reqPath, 'binary')
+        // if (mime.startsWith('text/')) {
+        //   content = fs.readFileSync(reqPath, 'utf8')
+        // } else {
+        //   content = fs.readFileSync(reqPath, 'binary')
+        // }
       } else {
         content = fs.readFileSync(reqPath)
       }
