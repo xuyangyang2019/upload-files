@@ -76,7 +76,7 @@ app.use(cors()) // 全部允许跨域
 //   cors({
 //     origin: function (ctx) {
 //       // 设置允许来自指定域名请求
-//       const whiteList = ['http://xyy.life', 'http://localhost:3001'] // 可跨域白名单
+//       const whiteList = ['http://xyy.life', 'http://localhost:3001','http://192.168.0.119:3001'] // 可跨域白名单
 //       const url = ctx.header.referer
 //         ? ctx.header.referer.substr(0, ctx.header.referer.length - 1)
 //         : ''

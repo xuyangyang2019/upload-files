@@ -5,10 +5,16 @@ const FileService = require('../../mongodb/services/FileService')
 module.exports = {
   // 文件上传接口
   'POST /api/upload': async (ctx) => {
+    // 上传的跨域问题
+    ctx.set('Access-Control-Allow-Origin', '*')
+    ctx.set('Access-Control-Allow-Headers', 'Content-Type')
+    ctx.set('Access-Control-Allow-Methods', 'POST')
+
     // 上传文件请求处理
     let result = { success: false }
     // 上传文件事件
     result = await uploadFile(ctx)
+    console.log(result)
 
     // 保存结果到数据库
     FileService.save(result)
