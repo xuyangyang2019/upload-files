@@ -28,6 +28,11 @@
             flex-direction: column;
         }
 
+        .upload-box {
+            height: calc(100vh - 136px);
+            overflow: hidden;
+        }
+
         /* .avatar-uploader .el-upload {
             border: 1px dashed #d9d9d9;
             border-radius: 6px;
@@ -53,25 +58,46 @@
 
         <el-tabs :tab-position="'left'" style=" flex: 1 1 auto; ">
             <el-tab-pane label="文件上传">
-                <el-upload class="upload-demo" drag action="/upload" multiple :show-file-list="true"
-                    :on-success="handleAvatarSuccess" :before-upload="beforeAvatarUpload">
-                    <i class="el-icon-upload"></i>
-                    <div class="el-upload__text">将文件拖到此处，或<em>点击上传</em></div>
-                    <div class="el-upload__tip" slot="tip">文件大小不能超过10M</div>
-                </el-upload>
+                <el-row type='flex' class="upload-box">
+                    <div style="width: 50%;overflow: auto;">
+                        <h1>element-ui 上传</h1>
+                        <h3>多文件上传时，会触发多个post请求</h3>
 
-                <!-- <form method="POST" action="/upload" enctype="multipart/form-data">
-                    <p>file upload</p>
-                    <span>picName:</span><input name="picName" type="text" /><br />
-                    <input name="file" type="file" /><br /><br />
-                    <button type="submit">submit</button>
-                </form> -->
+                        <el-upload class="upload-demo" drag action="/upload" multiple :show-file-list="true"
+                            :before-upload="beforeAvatarUpload" :on-success="handleAvatarSuccess">
+                            <i class="el-icon-upload"></i>
+                            <div class="el-upload__text">将文件拖到此处，或<em>点击上传</em></div>
+                            <div class="el-upload__tip" slot="tip">文件大小不能超过10M</div>
+                        </el-upload>
 
-                <div>
-                    <p>返回结果</p>
-                    {{result}}
-                </div>
+                        <div>
+                            <h3>返回结果</h3>
+                            <ul>
+                                <li v-for="(item,index) in fileList" ::key="index">
+                                    {{item}}
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
 
+                    <div style="width: 50%;overflow: auto;">
+                        <h1>原生的表单上传</h1>
+                        <h3>多文件上传时，只发送一个post</h3>
+                        <form method="POST" action="/upload" enctype="multipart/form-data">
+                            <span>picName:</span><input name="picName" type="text" /><br />
+                            <input name="file" type="file" multiple /><br /><br />
+                            <button type="submit">submit</button>
+                        </form>
+                        <div>
+                            <h3>返回结果</h3>
+                            <ul>
+                                <li v-for="(item,index) in fileList" ::key="index">
+                                    {{item}}
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </el-row>
             </el-tab-pane>
 
             <el-tab-pane label="文件上传异步">
@@ -164,11 +190,10 @@
                 return {
                     baseUrl: 'http://localhost:3001', // axios base url 
                     // baseUrl: 'http://xyy.life:3001',
-                    fileList: [],
 
                     activeIndex: '/',
-                    imageUrl: '',
-                    result: {},
+                    fileList: [],
+                    // imageUrl: '',
 
                     fileName: '', // 文件名
                     typeValue: 'all', // 文件类型
@@ -331,11 +356,7 @@
                     document.body.removeChild(a);
                 },
 
-                // 上传成功回调函数
-                handleAvatarSuccess(res, file) {
-                    this.result = res
-                    this.imageUrl = URL.createObjectURL(file.raw);
-                },
+
                 // 上传之前做些什么
                 beforeAvatarUpload(file) {
                     // const isJPG = file.type === 'image/jpeg';
@@ -348,6 +369,17 @@
                     }
                     // return isJPG && isLt2M;
                     return isLt2M;
+                },
+                handleChange(file, fileList) {
+                    console.log('handleChange', file)
+                    // this.fileList = fileList.slice(-3);
+                    // this.fileList = fileList;
+                },
+                // 上传成功回调函数
+                handleAvatarSuccess(res, file, fileList) {
+                    console.log('handleAvatarSuccess', fileList)
+                    // this.imageUrl = URL.createObjectURL(file.raw);
+                    this.fileList = fileList
                 },
 
                 // 上传文件
