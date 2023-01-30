@@ -47,8 +47,8 @@ function uploadFile(ctx, options = {}) {
   if (dd < 10) {
     dd = '0' + dd
   }
-  let defalutDir = yyyy + '-' + MM + '-' + dd
-  let defalutPath = path.join(__dirname, '../files')
+  let defalutDir = yyyy + '-' + MM + '-' + dd // 默认的文件夹名称
+  let defalutPath = path.join(__dirname, '../files') // 默认保存的路径
 
   // 以参数目录 加 文件类型作为 保存的目录
   let fileType = options.fileType || defalutDir
@@ -57,7 +57,7 @@ function uploadFile(ctx, options = {}) {
   let mkdirResult = mkdirsSync(filePath)
 
   let req = ctx.req
-  let res = ctx.res
+  // let res = ctx.res
 
   const bb = busboy({ headers: req.headers, defParamCharset: 'utf8' })
 

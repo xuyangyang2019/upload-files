@@ -53,14 +53,14 @@
 
         <el-tabs :tab-position="'left'" style=" flex: 1 1 auto; ">
             <el-tab-pane label="文件上传">
-                <el-upload class="upload-demo" drag action="/api/upload" multiple :show-file-list="true"
+                <el-upload class="upload-demo" drag action="/upload" multiple :show-file-list="true"
                     :on-success="handleAvatarSuccess" :before-upload="beforeAvatarUpload">
                     <i class="el-icon-upload"></i>
                     <div class="el-upload__text">将文件拖到此处，或<em>点击上传</em></div>
                     <div class="el-upload__tip" slot="tip">文件大小不能超过10M</div>
                 </el-upload>
 
-                <!-- <form method="POST" action="/file/upload" enctype="multipart/form-data">
+                <!-- <form method="POST" action="/upload" enctype="multipart/form-data">
                     <p>file upload</p>
                     <span>picName:</span><input name="picName" type="text" /><br />
                     <input name="file" type="file" /><br /><br />
@@ -367,7 +367,7 @@
                             let per = Math.floor((100 * loaded) / tot)
                             options.progress(per)
                         }
-                        xhr.open('post', '/api/upload')
+                        xhr.open('post', '/upload')
                         xhr.send(formData)
                     } catch (err) {
                         options.fail(err)
