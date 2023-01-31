@@ -1,7 +1,8 @@
 const fs = require('fs')
 const path = require('path')
 const busboy = require('busboy')
-const inspect = require('util').inspect
+let md5 = require('md5')
+// const inspect = require('util').inspect
 
 /**
  * 同步创建文件目录
@@ -87,15 +88,19 @@ function uploadFile(ctx, options = {}) {
       let saveTo = path.join(_uploadFilePath)
 
       let fileSize = 0
+      let content = ''
 
       // 文件保存到指定路径
       file.pipe(fs.createWriteStream(saveTo))
       file
         .on('data', (data) => {
           fileSize = fileSize + data.length
+          content = content + data
         })
         .on('close', () => {
           // console.log(`file close:${filename}保存成功，保存的名称是${saveName}`)
+          let _content = fs.readFileSync(saveTo, 'binary')
+
           urlList.push({
             filename: filename,
             fileSize: fileSize,
@@ -103,6 +108,8 @@ function uploadFile(ctx, options = {}) {
             mimeType: mimeType,
             saveTo: saveTo,
             url: `http://${ctx.host}/files/${dirName}/${saveName}`,
+            dataMd5: md5(content),
+            fileMd5: md5(_content),
           })
         })
     })
