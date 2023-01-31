@@ -83,18 +83,15 @@
                     <div style="width: 50%;overflow: auto;">
                         <h1>原生的表单上传</h1>
                         <h3>多文件上传时，只发送一个post</h3>
-                        <form method="POST" action="/upload" enctype="multipart/form-data">
+                        <form method="POST" action="/upload" enctype="multipart/form-data" target="frameName">
                             <span>picName:</span><input name="picName" type="text" /><br />
                             <input name="file" type="file" multiple /><br /><br />
                             <button type="submit">submit</button>
                         </form>
+
                         <div>
                             <h3>返回结果</h3>
-                            <ul>
-                                <li v-for="(item,index) in fileList" ::key="index">
-                                    {{item}}
-                                </li>
-                            </ul>
+                            <iframe src="" frameborder="0" name="frameName"></iframe>
                         </div>
                     </div>
                 </el-row>
@@ -451,9 +448,10 @@
                     let previewElem = document.getElementById('J_PicturePreview')
                     this.uploadAction({
                         success: function (result) {
+                            console.log(result)
                             if (result && result.code === 20000 && result.data) {
                                 previewElem.innerHTML =
-                                    '<img src="' + result.data.url + '" style="max-width: 100%">'
+                                    '<img src="' + result.data[0].url + '" style="max-width: 100%">'
                             }
                         },
                         progress: function (data) {
