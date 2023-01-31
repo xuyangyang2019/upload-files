@@ -36,7 +36,9 @@ function getSuffixName(fileName) {
  * @return {promise}
  */
 function uploadFile(ctx, options = {}) {
-  // 根据日期生成目录
+  // 默认的文件保存的目录
+  let defalutPath = path.join(__dirname, '../files')
+  // 默认按日期生成子目录
   let nowDay = new Date()
   let yyyy = nowDay.getFullYear()
   let MM = nowDay.getMonth() + 1
@@ -47,78 +49,81 @@ function uploadFile(ctx, options = {}) {
   if (dd < 10) {
     dd = '0' + dd
   }
-  let defalutDir = yyyy + '-' + MM + '-' + dd // 默认的文件夹名称
-  let defalutPath = path.join(__dirname, '../files') // 默认保存的路径
-
-  // 以参数目录 加 文件类型作为 保存的目录
-  let fileType = options.fileType || defalutDir
-  let filePath = path.join(options.path || defalutPath, fileType)
+  let defalutDir = yyyy + '-' + MM + '-' + dd
+  // options的参数优先
+  let dirName = options.dirName || defalutDir
+  // 生成最终的路径
+  let filePath = path.join(options.path || defalutPath, dirName)
   // 目录是否存在
   let mkdirResult = mkdirsSync(filePath)
 
-  let req = ctx.req
   // let res = ctx.res
-
+  let req = ctx.req
   const bb = busboy({ headers: req.headers, defParamCharset: 'utf8' })
+  console.log('bb:')
+
+  let fileCount = 0 // 一次上传的文件数量
+  let urlList = [] // 上传成功的url列表
+
+  // let result = {
+  //   success: false, // 上传结果
+  //   errMsg: '', // 错误信息
+  //   formData: {}, // 表单信息
+  // } // 整个post事件的结果
 
   return new Promise((resolve, reject) => {
-    let result = {
-      success: false, // 上传结果
-      message: '', // 上传结果
-      url: '', // url
-      saveTo: '', // 本地地址
-      formData: {}, // 表单信息
-      filename: '', // 文件名
-      encoding: '', // 编码方式
-      mimeType: '', // 文件类型
-      fileSize: 0, // 文件大小
-    }
-
     // 解析请求文件事件
     bb.on('file', (name, file, info) => {
+      ++fileCount
       const { filename, encoding, mimeType } = info
 
-      // result.name = name
-      result = { ...result, ...info }
-
+      // 按时间戳生成文件名
+      let saveName = new Date().getTime() + '.' + getSuffixName(filename)
       // 生成随机文件名
-      let saveName =
-        Math.random().toString(16).substr(2) + '.' + getSuffixName(filename)
+      // saveName = Math.random().toString(16).substr(2) + '.' + getSuffixName(filename)
 
       // 保存的路径
       let _uploadFilePath = path.join(filePath, saveName)
       let saveTo = path.join(_uploadFilePath)
 
-      result.saveTo = saveTo
-      result.url = `http://${ctx.host}/files/${fileType}/${saveName}`
+      let fileSize = 0
 
       // 文件保存到指定路径
       file.pipe(fs.createWriteStream(saveTo))
-
       file
         .on('data', (data) => {
-          result.fileSize = result.fileSize + data.length
+          fileSize = fileSize + data.length
         })
         .on('close', () => {
-          result.success = true
-          result.message = '文件上传成功'
+          // console.log(`file close:${filename}保存成功，保存的名称是${saveName}`)
+          urlList.push({
+            filename: filename,
+            fileSize: fileSize,
+            encoding: encoding,
+            mimeType: mimeType,
+            saveTo: saveTo,
+            url: `http://${ctx.host}/files/${dirName}/${saveName}`,
+          })
         })
     })
 
     // 解析表单中其他字段信息
     bb.on('field', (name, val, info) => {
-      result.formData[name] = inspect(val)
+      // console.log('bb field:', info)
+      // result.formData[name] = inspect(val)
     })
 
     // 解析结束事件
-    bb.on('finish', function () {
-      resolve(result)
+    bb.on('close', function () {
+      // console.log(`bb close:共有${fileCount}个文件`)
+      resolve(urlList)
     })
 
     // 解析错误事件
     bb.on('error', function (err) {
-      result.message = inspect(err)
-      reject(result)
+      // console.log('busboy error:', err)
+      // result.errMsg = inspect(err)
+      reject(err)
     })
 
     req.pipe(bb)
