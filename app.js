@@ -125,7 +125,7 @@ app.use(async (ctx) => {
     ctx.response.body = {
       code: 20000,
       msg: 'success',
-      data: urlList,
+      data: urlList.length === 1 ? urlList[0] : urlList,
     }
   } else if (ctx.url.startsWith('/files') && ctx.method === 'GET') {
     // 文件下载
