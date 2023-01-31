@@ -100,6 +100,15 @@ class BaseDAO {
   }
 
   /**
+   * 批量插入数据
+   * @param {Array} data 
+   */
+  async saveMany(data) {
+    const result = await this.model.insertMany(data)
+    return result
+  }
+
+  /**
    * 批量删除
    * @param {Object} condition 条件
    */

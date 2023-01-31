@@ -110,9 +110,10 @@ app.use(async (ctx) => {
     // console.log('upload urlList:', urlList)
 
     // 保存结果到数据库
-    for (const result of urlList) {
-      FileService.save(result)
-    }
+    // for (const result of urlList) {
+    //   FileService.save(result)
+    // }
+    FileService.saveMany(urlList)
 
     // "bizCode": 0,
     // "msg": "success",

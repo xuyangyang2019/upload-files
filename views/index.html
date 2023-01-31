@@ -136,7 +136,7 @@
                         <template slot-scope="{row}">
                             <div>
                                 <p v-text="row.url"></p>
-                                <img v-if="row.mimeType.startsWith('image')" style="height:100px;width: auto;"
+                                <img v-if="row.mimeType && row.mimeType.startsWith('image')" style="height:100px;width: auto;"
                                     :src="row.url" />
                             </div>
                         </template>
