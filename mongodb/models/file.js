@@ -9,8 +9,7 @@ module.exports = {
     filename: String, // 文件名
     encoding: String, // 编码方式
     mimeType: String, // 文件类型
-    dataMd5: String, // 上传时的md5
-    fileMd5: String, // 保存到本地后的md5
+    md5: { type: String, default: '' }, // 文件的md5（utf8）
     fileSize: { type: Number, default: 0 }, // 文件大小
     // formData: Object, // 表单信息
   },

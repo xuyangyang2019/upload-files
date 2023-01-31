@@ -60,8 +60,9 @@ function uploadFile(ctx, options = {}) {
 
   // let res = ctx.res
   let req = ctx.req
+  // utf8 解决中文文件名乱码的问题
   const bb = busboy({ headers: req.headers, defParamCharset: 'utf8' })
-  console.log('bb:')
+  // console.log('bb:')
 
   let fileCount = 0 // 一次上传的文件数量
   let urlList = [] // 上传成功的url列表
@@ -99,7 +100,6 @@ function uploadFile(ctx, options = {}) {
         })
         .on('close', () => {
           // console.log(`file close:${filename}保存成功，保存的名称是${saveName}`)
-          let _content = fs.readFileSync(saveTo, 'binary')
 
           urlList.push({
             filename: filename,
@@ -108,8 +108,7 @@ function uploadFile(ctx, options = {}) {
             mimeType: mimeType,
             saveTo: saveTo,
             url: `http://${ctx.host}/files/${dirName}/${saveName}`,
-            dataMd5: md5(content),
-            fileMd5: md5(_content),
+            md5: md5(content),
           })
         })
     })

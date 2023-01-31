@@ -107,7 +107,7 @@ app.use(async (ctx) => {
     ctx.set('Access-Control-Allow-Methods', 'POST')
 
     let urlList = await uploadFile(ctx)
-    console.log('upload urlList:', urlList)
+    // console.log('upload urlList:', urlList)
 
     // 保存结果到数据库
     for (const result of urlList) {
