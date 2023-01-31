@@ -2,15 +2,15 @@
 module.exports = {
   name: 'file',
   schema: {
-    success: { type: Boolean, default: false }, // 上传结果
-    message: { type: String, required: true }, // 上传结果
+    // success: { type: Boolean, default: false }, // 上传结果
+    // message: { type: String, required: true }, // 上传结果
     url: String, // url
     saveTo: String, // 本地地址
     filename: String, // 文件名
     encoding: String, // 编码方式
     mimeType: String, // 文件类型
     fileSize: { type: Number, default: 0 }, // 文件大小
-    formData: Object, // 表单信息
+    // formData: Object, // 表单信息
   },
   // 其他配置
   options: {
