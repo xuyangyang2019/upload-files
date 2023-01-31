@@ -4,11 +4,6 @@ const fs = require('fs')
 module.exports = {
   // 按条件查询文件记录
   'GET /api/file': async (ctx) => {
-    // 跨域问题
-    ctx.set('Access-Control-Allow-Origin', '*')
-    ctx.set('Access-Control-Allow-Headers', 'Content-Type')
-    ctx.set('Access-Control-Allow-Methods', 'GET')
-    
     const { page, limit, fileName, fileType, startTime, endTime } =
       ctx.request.query
 
